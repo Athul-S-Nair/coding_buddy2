@@ -31,7 +31,7 @@ type TutorRequestType = 'why_failing' | 'explain_concept' | 'hint'
 type Language = 'python' | 'c' | 'cpp' | 'java' | 'javascript'
 type TabType = 'code' | 'output'
 
-const API_URL = 'http://localhost:5000'
+import { API_URL } from '../../../lib/api'
 
 const defaultCode: Record<Language, string> = {
   python: `# Read input from stdin
@@ -106,10 +106,19 @@ export default function ProblemPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [language, setLanguage] = useState<Language>('python')
-  const [code, setCode] = useState(defaultCode.python)
+  const [codeByLanguage, setCodeByLanguage] = useState<Record<Language, string>>(() => ({
+    ...defaultCode,
+  }))
+  const code = codeByLanguage[language]
+  const setCode = (value: string) => {
+    setCodeByLanguage((prev) => ({ ...prev, [language]: value }))
+  }
   const [output, setOutput] = useState('')
   const [isRunningCode, setIsRunningCode] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [runStatus, setRunStatus] = useState('')
+  const [submitStatus, setSubmitStatus] = useState('')
+  const [elapsedSeconds, setElapsedSeconds] = useState(0)
   const [activeTab, setActiveTab] = useState<TabType>('code')
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [showAiMentor, setShowAiMentor] = useState(false)
@@ -150,8 +159,26 @@ export default function ProblemPage() {
   }, [params.id])
 
   useEffect(() => {
-    setCode(defaultCode[language])
-  }, [language])
+    if (!isRunningCode && !isSubmitting) {
+      setElapsedSeconds(0)
+      return
+    }
+
+    const startedAt = Date.now()
+    const intervalId = window.setInterval(() => {
+      setElapsedSeconds(Number(((Date.now() - startedAt) / 1000).toFixed(1)))
+    }, 100)
+
+    return () => window.clearInterval(intervalId)
+  }, [isRunningCode, isSubmitting])
+
+  const handleLanguageChange = (nextLanguage: Language) => {
+    setCodeByLanguage((prev) => ({
+      ...prev,
+      [language]: code,
+    }))
+    setLanguage(nextLanguage)
+  }
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -249,13 +276,15 @@ export default function ProblemPage() {
   const handleRunCode = async () => {
     if (!problem) return
 
+    const startedAt = Date.now()
     setIsRunningCode(true)
     setRunResults([])
     setRunSummary(null)
     setRunError(null)
+    setRunStatus('Running test cases in parallel...')
 
     try {
-      const response = await fetch('http://localhost:5000/submit', {
+      const response = await fetch(`${API_URL}/submit`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -282,6 +311,10 @@ export default function ProblemPage() {
       
       setRunResults(mappedResults)
       setRunSummary({ passed: result.passedTestCases || 0, total: result.totalTestCases || 0 })
+      const seconds = ((Date.now() - startedAt) / 1000).toFixed(1)
+      setRunStatus(
+        `Finished in ${seconds}s — ${result.passedTestCases}/${result.totalTestCases} passed`
+      )
       
       const firstError = result.testResults?.find((r: any) => !r.passed && r.error);
       if (firstError) {
@@ -289,6 +322,7 @@ export default function ProblemPage() {
       }
     } catch (error) {
       setRunError(error instanceof Error ? error.message : 'Failed to run code')
+      setRunStatus('Run failed')
     } finally {
       setIsRunningCode(false)
     }
@@ -297,12 +331,14 @@ export default function ProblemPage() {
   const handleSubmit = async () => {
     if (!problem) return;
 
+    const startedAt = Date.now()
     setIsSubmitting(true)
     setActiveTab('output')
-    setOutput('Submitting... Running test cases...\n\n')
+    setOutput('Submitting... Running test cases in parallel...\n\n')
+    setSubmitStatus('Submitting all test cases...')
 
     try {
-      const response = await fetch('http://localhost:5000/submit', {
+      const response = await fetch(`${API_URL}/submit`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -349,7 +385,10 @@ export default function ProblemPage() {
       }
 
       outputText += `${isAccepted ? '✅' : '❌'} ${result.overallStatus}\n\n`
+      const seconds = ((Date.now() - startedAt) / 1000).toFixed(1)
+      outputText += `Completed in ${seconds}s\n`
       outputText += `Test Cases: ${result.passedTestCases}/${result.totalTestCases} passed\n\n`
+      setSubmitStatus(`Completed in ${seconds}s`)
       outputText += '─'.repeat(50) + '\n\n'
 
       // Individual test case results
@@ -383,7 +422,8 @@ export default function ProblemPage() {
 
       setOutput(outputText.trim())
     } catch (error) {
-      setOutput(`Error: ${error instanceof Error ? error.message : 'Failed to submit'}\n\nPlease make sure the backend server is running on http://localhost:5000`)
+      setSubmitStatus('Submit failed')
+      setOutput(`Error: ${error instanceof Error ? error.message : 'Failed to submit'}\n\nPlease make sure the backend server is running on ${API_URL}`)
     } finally {
       setIsSubmitting(false)
     }
@@ -595,6 +635,11 @@ export default function ProblemPage() {
               />
             ) : (
               <div className="h-full p-4 overflow-y-auto bg-[#0d1117]">
+                {isSubmitting && (
+                  <p className="text-[#8b949e] text-xs mb-3">
+                    {submitStatus} ({elapsedSeconds.toFixed(1)}s)
+                  </p>
+                )}
                 <pre className="text-[#c9d1d9] text-sm font-mono whitespace-pre-wrap leading-relaxed">
                   {output || 'Click "Run" to see output or "Submit" to test your solution...'}
                 </pre>
@@ -611,7 +656,7 @@ export default function ProblemPage() {
                   <span className="text-[#8b949e] text-sm">Language:</span>
                   <select
                     value={language}
-                    onChange={(e) => setLanguage(e.target.value as Language)}
+                    onChange={(e) => handleLanguageChange(e.target.value as Language)}
                     className="bg-[#0d1117] text-white text-sm px-3 py-1.5 rounded border border-[#30363d] focus:border-[#58a6ff] focus:outline-none cursor-pointer"
                   >
                     <option value="python">Python</option>
@@ -622,7 +667,12 @@ export default function ProblemPage() {
                   </select>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
+                  {(isRunningCode || isSubmitting) && (
+                    <span className="text-xs text-[#8b949e] tabular-nums">
+                      {elapsedSeconds.toFixed(1)}s
+                    </span>
+                  )}
                   <button
                     onClick={handleRunCode}
                     disabled={isRunningCode || isSubmitting}
@@ -651,6 +701,12 @@ export default function ProblemPage() {
                   </button>
                 </div>
               </div>
+
+              {(runStatus || isRunningCode) && (
+                <p className="text-xs text-[#8b949e]">
+                  {isRunningCode ? `${runStatus || 'Running...'} (${elapsedSeconds.toFixed(1)}s)` : runStatus}
+                </p>
+              )}
 
               {(runError || runSummary || runResults.length > 0) && (
                 <div className="mt-3 space-y-3">

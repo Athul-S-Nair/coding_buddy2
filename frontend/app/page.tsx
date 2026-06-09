@@ -9,7 +9,7 @@ interface Problem {
   difficulty: string
 }
 
-const API_URL = 'http://localhost:5000'
+import { API_URL } from '../lib/api'
 
 export default function Home() {
   const [problems, setProblems] = useState<Problem[]>([])
