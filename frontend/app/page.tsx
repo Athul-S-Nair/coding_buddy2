@@ -17,7 +17,7 @@ interface ProgressData {
   streak: number
 }
 
-const API_URL = 'http://localhost:5000'
+import { API_URL } from '../lib/api'
 
 export default function Home() {
   const router = useRouter()
