@@ -31,8 +31,7 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedDifficulty, setSelectedDifficulty] = useState<'All' | 'Easy' | 'Medium' | 'Hard'>('All')
   const [tutorName, setTutorName] = useState('Sage')
-  const [kittyText, setKittyText] = useState("Purr... ready to learn? Let's crack some coding challenges today!")
-  const [kittyEmoji, setKittyEmoji] = useState('🐱')
+  const [tutorText, setTutorText] = useState("Wise choice! Let's solve some coding challenges today!")
 
   useEffect(() => {
     const savedName = localStorage.getItem('tutorName')
@@ -41,22 +40,7 @@ export default function Home() {
     }
   }, [])
 
-  const handleKittyClick = () => {
-    const reactions = [
-      { emoji: '😻', text: 'Purrfect logic! Keep going!' },
-      { emoji: '😽', text: 'Mrow! I love coding with you!' },
-      { emoji: '😸', text: 'You are on the right track!' },
-      { emoji: '😺', text: `${tutorName} is cheering you on!` },
-      { emoji: '🦁', text: 'Roar! You are a coding lion!' }
-    ]
-    const randomReaction = reactions[Math.floor(Math.random() * reactions.length)]
-    setKittyEmoji(randomReaction.emoji)
-    setKittyText(randomReaction.text)
-    setTimeout(() => {
-      setKittyEmoji('🐱')
-      setKittyText("Purr... ready to learn? Let's crack some coding challenges today!")
-    }, 3000)
-  }
+
 
   const fetchData = async () => {
     try {
@@ -287,7 +271,7 @@ export default function Home() {
         <div className="space-y-6">
           {/* User Profile Card / Hologram */}
           {!user ? (
-            /* Holographic Kitten Assistant Card */
+            /* Holographic Owl Assistant Card */
             <div className="glass-card p-6 flex flex-col items-center justify-center text-center overflow-hidden relative group border-cyan-500/20 shadow-lg shadow-cyan-500/5 hover:border-violet-500/30 hover:shadow-violet-500/10 min-h-[360px]">
               {/* Holographic grid scan lines */}
               <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:100%_4px] pointer-events-none animate-[pulse_2s_infinite]"></div>
@@ -308,7 +292,7 @@ export default function Home() {
                 </h3>
                 <div className="min-h-[50px] flex items-center justify-center">
                   <p className="text-xs text-slate-400 max-w-[200px] leading-relaxed transition-all duration-300">
-                    "{kittyText}"
+                    "{tutorText}"
                   </p>
                 </div>
               </div>
@@ -320,11 +304,6 @@ export default function Home() {
                 >
                   Log In / Register
                 </LinkComponent>
-              </div>
-
-              {/* Floating interaction tooltip bubble */}
-              <div className="absolute bottom-2 text-[9px] font-mono text-slate-500 tracking-wider opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0 select-none">
-                * CLICK THE KITTEN TO INTERACT *
               </div>
             </div>
           ) : (

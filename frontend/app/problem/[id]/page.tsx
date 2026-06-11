@@ -827,13 +827,13 @@ export default function ProblemPage() {
             {/* Chat Header */}
             <div className="border-b border-white/5 px-4 py-3 flex items-center justify-between bg-[#0f141d]">
               <div className="flex items-center gap-2.5">
-                {/* Large interactable kitten avatar */}
+                {/* Large interactable owl avatar */}
                 <div className="relative group cursor-pointer w-9 h-9 rounded-full bg-emerald-500 flex items-center justify-center font-bold text-white shadow-md shadow-emerald-500/20 transition-all duration-300 hover:scale-110 flex-shrink-0">
                   <span className="group-hover:opacity-0 transition-opacity duration-200">
                     {(tutorName[0] || 'S').toUpperCase()}
                   </span>
                   <span className="absolute opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-lg transform group-hover:rotate-12 transition-transform duration-300 select-none">
-                    🐱
+                    🦉
                   </span>
                 </div>
                 <div className="flex flex-col">
