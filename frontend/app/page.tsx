@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react'
 import LinkComponent from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Settings } from 'lucide-react'
+import dynamic from 'next/dynamic'
+
+const Mascot = dynamic(() => import('./components/Mascot'), { ssr: false })
 
 interface Problem {
   id: string
@@ -289,34 +292,9 @@ export default function Home() {
               {/* Holographic grid scan lines */}
               <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:100%_4px] pointer-events-none animate-[pulse_2s_infinite]"></div>
               
-              {/* Concentric rotating sci-fi projection rings */}
-              <div className="relative w-32 h-32 flex items-center justify-center mb-6">
-                {/* Outer Ring */}
-                <div className="absolute inset-0 border-2 border-dashed border-cyan-500/20 rounded-full animate-[spin_20s_infinite_linear] group-hover:border-violet-500/40 group-hover:scale-105 transition-all duration-500"></div>
-                {/* Mid Ring */}
-                <div className="absolute inset-2 border border-dotted border-cyan-400/30 rounded-full animate-[spin_10s_infinite_linear_reverse] group-hover:border-violet-400/50 group-hover:scale-95 transition-all duration-500"></div>
-                {/* Inner Glowing Ring */}
-                <div className="absolute inset-6 border border-cyan-300/40 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.2)] animate-pulse group-hover:shadow-[0_0_20px_rgba(139,92,246,0.3)]"></div>
-                
-                {/* Dynamic light cone */}
-                <div className="absolute bottom-[-10px] w-16 h-24 bg-gradient-to-t from-cyan-500/10 to-transparent blur-md rounded-full transform -skew-x-12 opacity-80 animate-pulse"></div>
-
-                {/* Interactive Kitten face */}
-                <div 
-                  onClick={handleKittyClick}
-                  className="relative w-16 h-16 bg-cyan-500/10 rounded-full border border-cyan-400/30 flex items-center justify-center text-4xl shadow-inner select-none transition-all duration-300 transform group-hover:scale-110 group-hover:bg-violet-500/10 group-hover:border-violet-400/40 cursor-pointer active:scale-95 z-20"
-                >
-                  <span className="group-hover:hidden transition-all duration-200 animate-[bounce_2s_infinite]">
-                    {kittyEmoji}
-                  </span>
-                  <span className="hidden group-hover:block transition-all duration-200 transform group-hover:rotate-6 text-4xl">
-                    {kittyEmoji === '🐱' ? '😸' : kittyEmoji}
-                  </span>
-                </div>
-
-                {/* Projection Sparkles */}
-                <div className="absolute top-2 left-6 w-1 h-1 rounded-full bg-cyan-400 animate-ping"></div>
-                <div className="absolute bottom-6 right-2 w-1.5 h-1.5 rounded-full bg-violet-400 animate-ping delay-300"></div>
+              {/* Mascot Lottie Animation */}
+              <div className="mb-6 flex justify-center items-center">
+                <Mascot />
               </div>
 
               {/* Holographic labels */}
