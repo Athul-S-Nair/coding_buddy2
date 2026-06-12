@@ -3,19 +3,17 @@ import { useRef, useState } from 'react'
 
 export default function Mascot() {
   const playerRef = useRef<any>(null)
-  const [isHovered, setIsHovered] = useState(false)
+  const [speed, setSpeed] = useState(1)
 
   return (
     <div
       className="cursor-pointer select-none"
       onMouseEnter={() => {
-        setIsHovered(true)
-        playerRef.current?.setSpeed(2)
+        setSpeed(2)
         playerRef.current?.play()
       }}
       onMouseLeave={() => {
-        setIsHovered(false)
-        playerRef.current?.setSpeed(1)
+        setSpeed(1)
       }}
       onClick={() => {
         playerRef.current?.stop()
@@ -27,6 +25,7 @@ export default function Mascot() {
         ref={playerRef}
         autoplay
         loop
+        speed={speed}
         src="/mascot.json"
         style={{ width: '100%', height: '100%' }}
       />
