@@ -24,19 +24,25 @@ router.post('/login', (req, res) => {
     { expiresIn: '7d' }
   );
 
-  res.cookie('token', token, {
+  const isProduction = process.env.NODE_ENV === 'production';
+  const cookieOptions = {
     httpOnly: true,
-    sameSite: 'lax',
+    sameSite: isProduction ? 'none' : 'lax',
+    secure: isProduction,
     path: '/',
-  });
+  };
+
+  res.cookie('token', token, cookieOptions);
 
   res.json({ id: user.id, username: user.username });
 });
 
 router.post('/logout', (req, res) => {
+  const isProduction = process.env.NODE_ENV === 'production';
   res.clearCookie('token', {
     httpOnly: true,
-    sameSite: 'lax',
+    sameSite: isProduction ? 'none' : 'lax',
+    secure: isProduction,
     path: '/',
   });
   res.json({ message: 'Logged out successfully' });
