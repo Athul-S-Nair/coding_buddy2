@@ -364,16 +364,16 @@ export default function ProblemPage() {
     setRunStatus(isCustom ? 'Executing custom input...' : 'Running test cases in parallel...')
 
     try {
-      const response = await fetch(`${API_URL}/api/run-code`, {
+      const response = await fetch(`${API_URL}/run-code`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          code,
-          language,
+          source_code: code,
+          language_id: languageIds[language],
           problemId: problem.id,
-          stdin: isCustom ? customInput : undefined
+          stdin: isCustom ? customInput : ''
         })
       })
 
