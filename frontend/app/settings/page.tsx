@@ -38,6 +38,12 @@ export default function SettingsPage() {
             Platform Settings
           </span>
         </div>
+        <Link 
+          href="/progress" 
+          className="text-xs font-semibold text-[#8b949e] hover:text-white transition-colors px-2 py-1.5 hover:bg-white/5 rounded-lg"
+        >
+          Progress
+        </Link>
       </nav>
 
       {/* Card Content */}

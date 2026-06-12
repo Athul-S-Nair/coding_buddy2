@@ -141,6 +141,7 @@ export default function ProblemPage() {
   const [visualData, setVisualData] = useState<any | null>(null)
   const [isVisualizing, setIsVisualizing] = useState(false)
   const [tutorName, setTutorName] = useState('Sage')
+  const [askedTutor, setAskedTutor] = useState(false)
 
   useEffect(() => {
     const savedName = localStorage.getItem('tutorName')
@@ -236,6 +237,7 @@ export default function ProblemPage() {
     }
     setAiLoading(true)
     setShowAiMentor(true)
+    setAskedTutor(true)
 
     try {
       const failedTestCase = runResults.find(test => !test.passed) || null
@@ -475,7 +477,8 @@ export default function ProblemPage() {
                 userId: userData.id,
                 problemId: problem.id,
                 language: language,
-                timeTaken: result.testResults.reduce((acc: number, t: any) => acc + (parseFloat(t.time) || 0), 0)
+                timeTaken: result.testResults.reduce((acc: number, t: any) => acc + (parseFloat(t.time) || 0), 0),
+                askedTutor: askedTutor
               })
             })
           }
@@ -582,6 +585,12 @@ export default function ProblemPage() {
         </div>
 
         <div className="flex items-center gap-3">
+          <Link 
+            href="/progress" 
+            className="text-xs font-semibold text-[#8b949e] hover:text-white transition-colors px-2 py-1.5 hover:bg-white/5 rounded-lg"
+          >
+            Progress
+          </Link>
           <Link 
             href="/settings" 
             className="text-[#8b949e] hover:text-white transition-colors p-1.5 hover:bg-white/5 rounded-lg"

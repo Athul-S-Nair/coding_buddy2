@@ -6,6 +6,23 @@ import { useRouter } from 'next/navigation'
 import { Settings } from 'lucide-react'
 import dynamic from 'next/dynamic'
 
+function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+      <path d="M9 18c-4.51 2-5-2-7-2" />
+    </svg>
+  )
+}
+
 const Mascot = dynamic(() => import('./components/Mascot'), { ssr: false })
 
 interface Problem {
@@ -144,15 +161,58 @@ export default function Home() {
 
         <div className="flex items-center gap-4">
           <LinkComponent 
+            href="/progress" 
+            className="text-sm font-semibold text-[#8b949e] hover:text-white transition-colors px-2 py-1.5 hover:bg-white/5 rounded-lg"
+          >
+            Progress
+          </LinkComponent>
+          <LinkComponent 
             href="/settings" 
             className="text-[#8b949e] hover:text-white transition-colors p-1.5 hover:bg-white/5 rounded-full"
             title="Settings"
           >
             <Settings className="w-4.5 h-4.5" />
           </LinkComponent>
+          <a
+            href="https://github.com/Amritha-Malapaka"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#8b949e] hover:text-white transition-colors p-1.5 hover:bg-white/5 rounded-full"
+            title="GitHub Profile"
+          >
+            <GithubIcon className="w-4.5 h-4.5" />
+          </a>
           {user ? (
             <div className="flex items-center gap-4 bg-white/5 border border-white/5 pl-4 pr-2 py-1.5 rounded-full">
               <span className="text-sm font-medium text-white">@{user.username}</span>
+              {progress && problems.length > 0 && (
+                <div className="relative w-6 h-6 flex items-center justify-center animate-fade-in" title={`${progress.totalSolved}/${problems.length} solved (${Math.round((progress.totalSolved / problems.length) * 100)}%)`}>
+                  <svg className="w-full h-full transform -rotate-90">
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="9"
+                      stroke="#1f2937"
+                      strokeWidth="2"
+                      fill="transparent"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="9"
+                      stroke="#10b981"
+                      strokeWidth="2"
+                      fill="transparent"
+                      strokeDasharray={2 * Math.PI * 9}
+                      strokeDashoffset={(2 * Math.PI * 9) * (1 - progress.totalSolved / problems.length)}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <span className="absolute text-[8px] font-bold text-emerald-400">
+                    {Math.round((progress.totalSolved / problems.length) * 100)}
+                  </span>
+                </div>
+              )}
               <button
                 onClick={handleLogout}
                 className="px-3 py-1 bg-white/10 hover:bg-rose-500/20 hover:text-rose-300 border border-white/5 rounded-full text-xs font-semibold transition-all"

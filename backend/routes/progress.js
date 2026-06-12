@@ -1,10 +1,10 @@
 const express = require('express');
-const { readProgress, writeProgress } = require('../data/store');
+const { readProgress, writeProgress, problems } = require('../data/store');
 
 const router = express.Router();
 
 router.post('/solve', (req, res) => {
-  const { userId, problemId, language, timeTaken } = req.body;
+  const { userId, problemId, language, timeTaken, askedTutor } = req.body;
 
   if (!userId || !problemId || !language) {
     return res.status(400).json({
@@ -29,6 +29,7 @@ router.post('/solve', (req, res) => {
       language,
       timeTaken: timeTaken || 0,
       timestamp: new Date().toISOString(),
+      askedTutor: !!askedTutor,
     });
 
     try {
@@ -89,10 +90,44 @@ router.get('/:userId', (req, res) => {
     }
   }
 
+  const cleanSolvesCount = userProgress.solves.filter((solve) => !solve.askedTutor).length;
+
+  const solveHistory = userProgress.solves.map((solve) => {
+    const prob = problems.find((p) => p.id === solve.problemId);
+    return {
+      problemId: solve.problemId,
+      title: prob ? prob.title : 'Unknown Problem',
+      difficulty: prob ? prob.difficulty : 'Easy',
+      concept: prob ? prob.concept : 'Arrays',
+      solvedAt: solve.timestamp,
+      askedTutor: !!solve.askedTutor,
+      language: solve.language || 'python',
+      timeTaken: solve.timeTaken || 0,
+    };
+  });
+
+  const conceptMastery = {};
+  const conceptsList = [
+    "Arrays", "Two Pointers", "Hash Maps", "Sliding Window", "Linked Lists",
+    "Strings", "Dynamic Programming", "Trees", "Graphs", "Recursion",
+    "Binary Search", "Stacks & Queues"
+  ];
+  conceptsList.forEach(c => conceptMastery[c] = 0);
+
+  userProgress.solves.forEach((solve) => {
+    const prob = problems.find((p) => p.id === solve.problemId);
+    if (prob && prob.concept) {
+      conceptMastery[prob.concept] = (conceptMastery[prob.concept] || 0) + 1;
+    }
+  });
+
   res.json({
     solvedProblems,
     totalSolved,
     streak,
+    cleanSolvesCount,
+    solveHistory,
+    conceptMastery,
   });
 });
 

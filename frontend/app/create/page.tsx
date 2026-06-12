@@ -139,13 +139,21 @@ export default function CreateProblem() {
           <div className="h-4 w-px bg-white/10"></div>
           <span className="text-sm font-bold text-white tracking-tight">Create Custom Problem</span>
         </div>
-        <Link 
-          href="/settings" 
-          className="text-[#8b949e] hover:text-white transition-colors p-1.5 hover:bg-white/5 rounded-full"
-          title="Settings"
-        >
-          <Settings className="w-4 h-4" />
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link 
+            href="/progress" 
+            className="text-xs font-semibold text-[#8b949e] hover:text-white transition-colors px-2 py-1.5 hover:bg-white/5 rounded-lg"
+          >
+            Progress
+          </Link>
+          <Link 
+            href="/settings" 
+            className="text-[#8b949e] hover:text-white transition-colors p-1.5 hover:bg-white/5 rounded-full"
+            title="Settings"
+          >
+            <Settings className="w-4 h-4" />
+          </Link>
+        </div>
       </nav>
 
       <div className="max-w-3xl mx-auto px-6 py-10">
