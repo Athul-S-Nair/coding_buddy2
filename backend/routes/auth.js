@@ -26,7 +26,8 @@ router.post('/login', (req, res) => {
 
   res.cookie('token', token, {
     httpOnly: true,
-    sameSite: 'strict',
+    sameSite: 'lax',
+    path: '/',
   });
 
   res.json({ id: user.id, username: user.username });
@@ -35,7 +36,8 @@ router.post('/login', (req, res) => {
 router.post('/logout', (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,
-    sameSite: 'strict',
+    sameSite: 'lax',
+    path: '/',
   });
   res.json({ message: 'Logged out successfully' });
 });

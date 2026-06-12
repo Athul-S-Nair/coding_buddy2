@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Settings } from 'lucide-react'
+import { API_URL } from '../../lib/api'
 
 interface ExampleInput {
   input: string
@@ -97,7 +98,7 @@ export default function CreateProblem() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/problems', {
+      const response = await fetch(`${API_URL}/api/problems`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

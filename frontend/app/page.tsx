@@ -330,43 +330,7 @@ export default function Home() {
         {/* Right Column: Statistics & User Profile (takes 1 col) */}
         <div className="space-y-6">
           {/* User Profile Card / Hologram */}
-          {!user ? (
-            /* Holographic Owl Assistant Card */
-            <div className="glass-card p-6 flex flex-col items-center justify-center text-center overflow-hidden relative group border-cyan-500/20 shadow-lg shadow-cyan-500/5 hover:border-violet-500/30 hover:shadow-violet-500/10 min-h-[360px]">
-              {/* Holographic grid scan lines */}
-              <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:100%_4px] pointer-events-none animate-[pulse_2s_infinite]"></div>
-              
-              {/* Mascot Lottie Animation */}
-              <div className="mb-6 flex justify-center items-center">
-                <Mascot />
-              </div>
-
-              {/* Holographic labels */}
-              <div className="space-y-3 relative z-10">
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] font-mono font-bold tracking-widest uppercase animate-pulse">
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
-                  {tutorName} Hologram
-                </div>
-                <h3 className="text-white font-bold text-base group-hover:text-cyan-300 transition-colors">
-                  Interactive AI Assistant
-                </h3>
-                <div className="min-h-[50px] flex items-center justify-center">
-                  <p className="text-xs text-slate-400 max-w-[200px] leading-relaxed transition-all duration-300">
-                    "{tutorText}"
-                  </p>
-                </div>
-              </div>
-
-              <div className="w-full mt-6 flex flex-col gap-2 relative z-10">
-                <LinkComponent
-                  href="/login"
-                  className="w-full py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-sm font-semibold rounded-lg transition-all text-center shadow-lg shadow-violet-500/20"
-                >
-                  Log In / Register
-                </LinkComponent>
-              </div>
-            </div>
-          ) : (
+          {user && (
             /* User Profile Card */
             <div className="glass-card p-6 flex flex-col items-center text-center">
               <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-violet-500 to-indigo-500 flex items-center justify-center font-bold text-white text-2xl shadow-lg shadow-violet-500/25 mb-4">
@@ -380,7 +344,7 @@ export default function Home() {
               </p>
 
               {progress && (
-                <div className="w-full grid grid-cols-2 gap-4 py-4 border-t border-b border-white/5 mb-6">
+                <div className="w-full grid grid-cols-2 gap-4 py-4 border-t border-b border-white/5">
                   <div>
                     <p className="text-2xl font-black text-white">{progress.totalSolved}</p>
                     <p className="text-[10px] font-semibold uppercase tracking-wider text-[#8b949e]">Solved</p>
@@ -396,6 +360,44 @@ export default function Home() {
               )}
             </div>
           )}
+
+          {/* Holographic Owl Assistant Card */}
+          <div className="glass-card p-6 flex flex-col items-center justify-center text-center overflow-hidden relative group border-cyan-500/20 shadow-lg shadow-cyan-500/5 hover:border-violet-500/30 hover:shadow-violet-500/10 min-h-[360px]">
+            {/* Holographic grid scan lines */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:100%_4px] pointer-events-none animate-[pulse_2s_infinite]"></div>
+            
+            {/* Mascot Lottie Animation */}
+            <div className="mb-6 flex justify-center items-center">
+              <Mascot />
+            </div>
+
+            {/* Holographic labels */}
+            <div className="space-y-3 relative z-10">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] font-mono font-bold tracking-widest uppercase animate-pulse">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+                {tutorName} Hologram
+              </div>
+              <h3 className="text-white font-bold text-base group-hover:text-cyan-300 transition-colors">
+                Interactive AI Assistant
+              </h3>
+              <div className="min-h-[50px] flex items-center justify-center">
+                <p className="text-xs text-slate-400 max-w-[200px] leading-relaxed transition-all duration-300">
+                  "{tutorText}"
+                </p>
+              </div>
+            </div>
+
+            {!user && (
+              <div className="w-full mt-6 flex flex-col gap-2 relative z-10">
+                <LinkComponent
+                  href="/login"
+                  className="w-full py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-sm font-semibold rounded-lg transition-all text-center shadow-lg shadow-violet-500/20"
+                >
+                  Log In / Register
+                </LinkComponent>
+              </div>
+            )}
+          </div>
 
           {/* Progress Breakdown */}
           {progress && (
