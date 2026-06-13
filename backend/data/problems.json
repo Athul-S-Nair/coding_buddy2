@@ -786,5 +786,2191 @@
         "expectedOutput": "0"
       }
     ]
+  },
+  {
+    "id": "7",
+    "title": "Best Time to Buy and Sell Stock",
+    "difficulty": "Easy",
+    "concept": "Arrays",
+    "description": "You are given an array prices where prices[i] is the price of a given stock on the ith day. You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock. Return the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return 0.",
+    "examples": [
+      {
+        "input": "6\n7 1 5 3 6 4",
+        "output": "5",
+        "explanation": "Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6-1 = 5."
+      }
+    ],
+    "constraints": [
+      "1 <= prices.length <= 10^5",
+      "0 <= prices[i] <= 10^4"
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: size of prices array\n# Line 2: space-separated stock prices\n# Write your solution here\ndef maxProfit(prices):\n    pass",
+      "javascript": "// Input format:\n// Line 1: size of prices array\n// Line 2: space-separated stock prices\n// Write your solution here\nfunction maxProfit(prices) {\n    \n}",
+      "java": "// Input format:\n// Line 1: size of prices array\n// Line 2: space-separated stock prices\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public int maxProfit(int[] prices) {\n        return 0;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: size of prices array\n// Line 2: space-separated stock prices\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    int maxProfit(vector<int>& prices) {\n        return 0;\n    }\n};",
+      "c": "// Input format:\n// Line 1: size of prices array\n// Line 2: space-separated stock prices\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nint maxProfit(int* prices, int pricesSize) {\n    return 0;\n}"
+    },
+    "testCases": [
+      {
+        "input": "6\n7 1 5 3 6 4",
+        "expectedOutput": "5"
+      },
+      {
+        "input": "5\n7 6 4 3 1",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "1\n1",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "3\n2 4 1",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "2\n1 2",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "2\n2 1",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "2\n1 1",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "6\n3 2 6 5 0 3",
+        "expectedOutput": "4"
+      },
+      {
+        "input": "2\n1 10",
+        "expectedOutput": "9"
+      },
+      {
+        "input": "2\n10 1",
+        "expectedOutput": "0"
+      }
+    ]
+  },
+  {
+    "id": "8",
+    "title": "Maximum Subarray",
+    "difficulty": "Medium",
+    "concept": "Arrays",
+    "description": "Given an integer array nums, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.",
+    "examples": [
+      {
+        "input": "9\n-2 1 -3 4 -1 2 1 -5 4",
+        "output": "6",
+        "explanation": "[4,-1,2,1] has the largest sum = 6."
+      }
+    ],
+    "constraints": [
+      "1 <= nums.length <= 10^5",
+      "-10^4 <= nums[i] <= 10^4"
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: size of array\n# Line 2: space-separated integers\n# Write your solution here\ndef maxSubArray(nums):\n    pass",
+      "javascript": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\n// Write your solution here\nfunction maxSubArray(nums) {\n    \n}",
+      "java": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public int maxSubArray(int[] nums) {\n        return 0;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    int maxSubArray(vector<int>& nums) {\n        return 0;\n    }\n};",
+      "c": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nint maxSubArray(int* nums, int numsSize) {\n    return 0;\n}"
+    },
+    "testCases": [
+      {
+        "input": "9\n-2 1 -3 4 -1 2 1 -5 4",
+        "expectedOutput": "6"
+      },
+      {
+        "input": "1\n1",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "5\n5 4 -1 7 8",
+        "expectedOutput": "23"
+      },
+      {
+        "input": "1\n-1",
+        "expectedOutput": "-1"
+      },
+      {
+        "input": "2\n-2 -1",
+        "expectedOutput": "-1"
+      },
+      {
+        "input": "3\n0 0 0",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "3\n-3 -2 -1",
+        "expectedOutput": "-1"
+      },
+      {
+        "input": "5\n1 2 3 4 5",
+        "expectedOutput": "15"
+      },
+      {
+        "input": "5\n-1 2 3 -4 5",
+        "expectedOutput": "6"
+      },
+      {
+        "input": "3\n100 -1 100",
+        "expectedOutput": "199"
+      }
+    ]
+  },
+  {
+    "id": "9",
+    "title": "Move Zeroes",
+    "difficulty": "Easy",
+    "concept": "Arrays",
+    "description": "Given an integer array nums, move all 0's to the end of it while maintaining the relative order of the non-zero elements. Return the modified array as space-separated values.",
+    "examples": [
+      {
+        "input": "5\n0 1 0 3 12",
+        "output": "1 3 12 0 0",
+        "explanation": "All zeros are moved to the end."
+      }
+    ],
+    "constraints": [
+      "1 <= nums.length <= 10^4",
+      "-2^31 <= nums[i] <= 2^31 - 1"
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: size of array\n# Line 2: space-separated integers\n# Write your solution here\ndef moveZeroes(nums):\n    pass",
+      "javascript": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\n// Write your solution here\nfunction moveZeroes(nums) {\n    \n}",
+      "java": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public void moveZeroes(int[] nums) {\n        \n    }\n}",
+      "cpp": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    void moveZeroes(vector<int>& nums) {\n        \n    }\n};",
+      "c": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nvoid moveZeroes(int* nums, int numsSize) {\n    \n}"
+    },
+    "testCases": [
+      {
+        "input": "5\n0 1 0 3 12",
+        "expectedOutput": "1 3 12 0 0"
+      },
+      {
+        "input": "1\n0",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "1\n1",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "3\n0 0 1",
+        "expectedOutput": "1 0 0"
+      },
+      {
+        "input": "5\n1 0 1 0 1",
+        "expectedOutput": "1 1 1 0 0"
+      },
+      {
+        "input": "3\n0 0 0",
+        "expectedOutput": "0 0 0"
+      },
+      {
+        "input": "3\n1 2 3",
+        "expectedOutput": "1 2 3"
+      },
+      {
+        "input": "10\n4 2 4 0 0 3 0 5 1 0",
+        "expectedOutput": "4 2 4 3 5 1 0 0 0 0"
+      },
+      {
+        "input": "2\n0 1",
+        "expectedOutput": "1 0"
+      },
+      {
+        "input": "2\n1 0",
+        "expectedOutput": "1 0"
+      }
+    ]
+  },
+  {
+    "id": "10",
+    "title": "Contains Duplicate",
+    "difficulty": "Easy",
+    "concept": "Arrays",
+    "description": "Given an integer array nums, return true if any value appears at least twice in the array, and return false if every element is distinct.",
+    "examples": [
+      {
+        "input": "4\n1 2 3 1",
+        "output": "true"
+      }
+    ],
+    "constraints": [
+      "1 <= nums.length <= 10^5",
+      "-10^9 <= nums[i] <= 10^9"
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: size of array\n# Line 2: space-separated integers\n# Write your solution here\ndef containsDuplicate(nums):\n    pass",
+      "javascript": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\n// Write your solution here\nfunction containsDuplicate(nums) {\n    \n}",
+      "java": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public boolean containsDuplicate(int[] nums) {\n        return false;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    bool containsDuplicate(vector<int>& nums) {\n        return false;\n    }\n};",
+      "c": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nbool containsDuplicate(int* nums, int numsSize) {\n    return false;\n}"
+    },
+    "testCases": [
+      {
+        "input": "4\n1 2 3 1",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "4\n1 2 3 4",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "10\n1 1 1 3 3 4 3 2 4 2",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "0\n",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "1\n1",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "2\n0 0",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "2\n-1 -1",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "10\n1 2 3 4 5 6 7 8 9 10",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "2\n10 10",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "5\n1 2 3 4 1",
+        "expectedOutput": "true"
+      }
+    ]
+  },
+  {
+    "id": "11",
+    "title": "Longest Substring Without Repeating Characters",
+    "difficulty": "Medium",
+    "concept": "Sliding Window",
+    "description": "Given a string s, find the length of the longest substring without repeating characters.",
+    "examples": [
+      {
+        "input": "abcabcbb",
+        "output": "3"
+      }
+    ],
+    "constraints": [
+      "0 <= s.length <= 5 * 10^4"
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: string s\n# Write your solution here\ndef lengthOfLongestSubstring(s):\n    pass",
+      "javascript": "// Input format:\n// Line 1: string s\n// Write your solution here\nfunction lengthOfLongestSubstring(s) {\n    \n}",
+      "java": "// Input format:\n// Line 1: string s\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public int lengthOfLongestSubstring(String s) {\n        return 0;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: string s\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    int lengthOfLongestSubstring(string s) {\n        return 0;\n    }\n};",
+      "c": "// Input format:\n// Line 1: string s\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nint lengthOfLongestSubstring(char* s) {\n    return 0;\n}"
+    },
+    "testCases": [
+      {
+        "input": "abcabcbb",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "bbbbb",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "pwwkew",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "a",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "au",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "dvdf",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "abcdef",
+        "expectedOutput": "6"
+      },
+      {
+        "input": "aab",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "abba",
+        "expectedOutput": "2"
+      }
+    ]
+  },
+  {
+    "id": "12",
+    "title": "Maximum Average Subarray I",
+    "difficulty": "Easy",
+    "concept": "Sliding Window",
+    "description": "You are given an integer array nums consisting of n elements, and an integer k. Find a contiguous subarray whose length is equal to k that has the maximum average value and return this value.",
+    "examples": [
+      {
+        "input": "1 12 -5 -6 50 3\n4",
+        "output": "12.75"
+      }
+    ],
+    "constraints": [
+      "1 <= k <= nums.length <= 10^5",
+      "-10^4 <= nums[i] <= 10^4"
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: space-separated integers\n# Line 2: target average length k\n# Write your solution here\ndef findMaxAverage(nums, k):\n    pass",
+      "javascript": "// Input format:\n// Line 1: space-separated integers\n// Line 2: target average length k\n// Write your solution here\nfunction findMaxAverage(nums, k) {\n    \n}",
+      "java": "// Input format:\n// Line 1: space-separated integers\n// Line 2: target average length k\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public double findMaxAverage(int[] nums, int k) {\n        return 0.0;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: space-separated integers\n// Line 2: target average length k\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    double findMaxAverage(vector<int>& nums, int k) {\n        return 0.0;\n    }\n};",
+      "c": "// Input format:\n// Line 1: space-separated integers\n// Line 2: target average length k\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\ndouble findMaxAverage(int* nums, int numsSize, int k) {\n    return 0.0;\n}"
+    },
+    "testCases": [
+      {
+        "input": "1 12 -5 -6 50 3\n4",
+        "expectedOutput": "12.75"
+      },
+      {
+        "input": "5\n1",
+        "expectedOutput": "5.0"
+      },
+      {
+        "input": "0 1 2 3\n2",
+        "expectedOutput": "2.5"
+      },
+      {
+        "input": "4 0 4 3 3\n5",
+        "expectedOutput": "2.8"
+      },
+      {
+        "input": "1 1 1 1 1\n3",
+        "expectedOutput": "1.0"
+      },
+      {
+        "input": "-1 -2 -3 -4\n2",
+        "expectedOutput": "-1.5"
+      },
+      {
+        "input": "10 2 3 10\n2",
+        "expectedOutput": "6.5"
+      },
+      {
+        "input": "5 5 5 5\n4",
+        "expectedOutput": "5.0"
+      },
+      {
+        "input": "1 2 3 4 5\n1",
+        "expectedOutput": "5.0"
+      },
+      {
+        "input": "3 1 4 1 5 9\n3",
+        "expectedOutput": "6.0"
+      }
+    ]
+  },
+  {
+    "id": "13",
+    "title": "Valid Palindrome",
+    "difficulty": "Easy",
+    "concept": "Two Pointers",
+    "description": "A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Alphanumeric characters include letters and numbers. Given a string s, return true if it is a palindrome, or false otherwise.",
+    "examples": [
+      {
+        "input": "A man, a plan, a canal: Panama",
+        "output": "true"
+      }
+    ],
+    "constraints": [
+      "1 <= s.length <= 2 * 10^5",
+      "s consists only of printable ASCII characters."
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: string s\n# Write your solution here\ndef isPalindrome(s):\n    pass",
+      "javascript": "// Input format:\n// Line 1: string s\n// Write your solution here\nfunction isPalindrome(s) {\n    \n}",
+      "java": "// Input format:\n// Line 1: string s\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public boolean isPalindrome(String s) {\n        return false;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: string s\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    bool isPalindrome(string s) {\n        return false;\n    }\n};",
+      "c": "// Input format:\n// Line 1: string s\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nbool isPalindrome(char* s) {\n    return false;\n}"
+    },
+    "testCases": [
+      {
+        "input": "A man, a plan, a canal: Panama",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "race a car",
+        "expectedOutput": "false"
+      },
+      {
+        "input": " ",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "a",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "ab",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "0P",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "Was it a car or a cat I saw?",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "No lemon no melon",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "Never odd or even",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "hello",
+        "expectedOutput": "false"
+      }
+    ]
+  },
+  {
+    "id": "14",
+    "title": "3Sum",
+    "difficulty": "Medium",
+    "concept": "Two Pointers",
+    "description": "Given an integer array nums, return the count of unique triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.",
+    "examples": [
+      {
+        "input": "6\n-1 0 1 2 -1 -4",
+        "output": "2",
+        "explanation": "Triplets are [-1, 0, 1] and [-1, -1, 2]."
+      }
+    ],
+    "constraints": [
+      "3 <= nums.length <= 3000",
+      "-10^5 <= nums[i] <= 10^5"
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: size of array\n# Line 2: space-separated integers\n# Write your solution here\ndef threeSumCount(nums):\n    pass",
+      "javascript": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\n// Write your solution here\nfunction threeSumCount(nums) {\n    \n}",
+      "java": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public int threeSumCount(int[] nums) {\n        return 0;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    int threeSumCount(vector<int>& nums) {\n        return 0;\n    }\n};",
+      "c": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nint threeSumCount(int* nums, int numsSize) {\n    return 0;\n}"
+    },
+    "testCases": [
+      {
+        "input": "6\n-1 0 1 2 -1 -4",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "0\n",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "1\n0",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "3\n0 0 0",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "5\n-2 0 1 1 2",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "15\n-4 -2 -2 -2 0 1 2 2 2 3 3 4 4 6 6",
+        "expectedOutput": "6"
+      },
+      {
+        "input": "3\n1 2 -3",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "3\n1 2 3",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "3\n-1 -1 2",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "4\n0 0 0 0",
+        "expectedOutput": "1"
+      }
+    ]
+  },
+  {
+    "id": "15",
+    "title": "Binary Search",
+    "difficulty": "Easy",
+    "concept": "Binary Search",
+    "description": "Given an array of integers nums which is sorted in ascending order, and an integer target, write a function to search target in nums. If target exists, then return its index. Otherwise, return -1.",
+    "examples": [
+      {
+        "input": "-1 0 3 5 9 12\n9",
+        "output": "4"
+      }
+    ],
+    "constraints": [
+      "1 <= nums.length <= 10^4",
+      "-10^4 < nums[i], target < 10^4",
+      "All the integers in nums are unique.",
+      "nums is sorted in ascending order."
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: space-separated sorted integers\n# Line 2: target integer\n# Write your solution here\ndef search(nums, target):\n    pass",
+      "javascript": "// Input format:\n// Line 1: space-separated sorted integers\n// Line 2: target integer\n// Write your solution here\nfunction search(nums, target) {\n    \n}",
+      "java": "// Input format:\n// Line 1: space-separated sorted integers\n// Line 2: target integer\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public int search(int[] nums, int target) {\n        return -1;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: space-separated sorted integers\n// Line 2: target integer\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    int search(vector<int>& nums, int target) {\n        return -1;\n    }\n};",
+      "c": "// Input format:\n// Line 1: space-separated sorted integers\n// Line 2: target integer\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nint search(int* nums, int numsSize, int target) {\n    return -1;\n}"
+    },
+    "testCases": [
+      {
+        "input": "-1 0 3 5 9 12\n9",
+        "expectedOutput": "4"
+      },
+      {
+        "input": "-1 0 3 5 9 12\n2",
+        "expectedOutput": "-1"
+      },
+      {
+        "input": "1\n1",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "1\n2",
+        "expectedOutput": "-1"
+      },
+      {
+        "input": "1 2\n1",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "1 2\n2",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "2 5\n0",
+        "expectedOutput": "-1"
+      },
+      {
+        "input": "1 3 5 7 9 11\n7",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "-10 -5 0 5 10\n0",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "1 2 3 4 5 6 7 8 9 10\n5",
+        "expectedOutput": "4"
+      }
+    ]
+  },
+  {
+    "id": "16",
+    "title": "Find Minimum in Rotated Sorted Array",
+    "difficulty": "Medium",
+    "concept": "Binary Search",
+    "description": "Suppose an array of length n sorted in ascending order is rotated between 1 and n times. Find the minimum element in this array. (All elements are unique)",
+    "examples": [
+      {
+        "input": "5\n3 4 5 1 2",
+        "output": "1"
+      }
+    ],
+    "constraints": [
+      "n == nums.length",
+      "1 <= n <= 5000",
+      "-5000 <= nums[i] <= 5000"
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: size of array\n# Line 2: space-separated rotated integers\n# Write your solution here\ndef findMin(nums):\n    pass",
+      "javascript": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated rotated integers\n// Write your solution here\nfunction findMin(nums) {\n    \n}",
+      "java": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated rotated integers\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public int findMin(int[] nums) {\n        return 0;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated rotated integers\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    int findMin(vector<int>& nums) {\n        return 0;\n    }\n};",
+      "c": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated rotated integers\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nint findMin(int* nums, int numsSize) {\n    return 0;\n}"
+    },
+    "testCases": [
+      {
+        "input": "5\n3 4 5 1 2",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "7\n4 5 6 7 0 1 2",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "4\n11 13 15 17",
+        "expectedOutput": "11"
+      },
+      {
+        "input": "1\n1",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "2\n2 1",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "5\n5 1 2 3 4",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "3\n3 1 2",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "5\n1 2 3 4 5",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "8\n7 8 1 2 3 4 5 6",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "8\n4 5 6 7 8 1 2 3",
+        "expectedOutput": "1"
+      }
+    ]
+  },
+  {
+    "id": "18",
+    "title": "Group Anagrams",
+    "difficulty": "Medium",
+    "concept": "Hash Maps",
+    "description": "Given an array of strings strs, group the anagrams together. Return the number of grouped anagrams.",
+    "examples": [
+      {
+        "input": "eat tea tan ate nat bat",
+        "output": "3",
+        "explanation": "Groups are [['bat'], ['nat', 'tan'], ['ate', 'eat', 'tea']]."
+      }
+    ],
+    "constraints": [
+      "1 <= strs.length <= 10^4",
+      "0 <= strs[i].length <= 100",
+      "strs[i] consists of lowercase English letters."
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: space-separated strings\n# Write your solution here\ndef groupAnagramsCount(strs):\n    pass",
+      "javascript": "// Input format:\n// Line 1: space-separated strings\n// Write your solution here\nfunction groupAnagramsCount(strs) {\n    \n}",
+      "java": "// Input format:\n// Line 1: space-separated strings\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public int groupAnagramsCount(String[] strs) {\n        return 0;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: space-separated strings\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    int groupAnagramsCount(vector<string>& strs) {\n        return 0;\n    }\n};",
+      "c": "// Input format:\n// Line 1: space-separated strings\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nint groupAnagramsCount(char** strs, int strsSize) {\n    return 0;\n}"
+    },
+    "testCases": [
+      {
+        "input": "eat tea tan ate nat bat",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "a",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "abc bca cab",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "abc def ghi",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "a b c",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "ab ba abc cba bca",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "eat tea ate",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "stop tops pots opts",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "aab baa aab",
+        "expectedOutput": "1"
+      }
+    ]
+  },
+  {
+    "id": "19",
+    "title": "Reverse Linked List",
+    "difficulty": "Easy",
+    "concept": "Linked Lists",
+    "description": "Given the head of a singly linked list, reverse the list, and return the reversed list as space-separated values.",
+    "examples": [
+      {
+        "input": "1 2 3 4 5",
+        "output": "5 4 3 2 1"
+      }
+    ],
+    "constraints": [
+      "The number of nodes in the list is the range [0, 5000].",
+      "-5000 <= Node.val <= 5000"
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: space-separated linked list node values\n# Write your solution here\ndef reverseList(head_values):\n    pass",
+      "javascript": "// Input format:\n// Line 1: space-separated linked list node values\n// Write your solution here\nfunction reverseList(head_values) {\n    \n}",
+      "java": "// Input format:\n// Line 1: space-separated linked list node values\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public String reverseList(String head_values) {\n        return \"\";\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: space-separated linked list node values\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    string reverseList(string head_values) {\n        return \"\";\n    }\n};",
+      "c": "// Input format:\n// Line 1: space-separated linked list node values\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nchar* reverseList(char* head_values) {\n    return \"\";\n}"
+    },
+    "testCases": [
+      {
+        "input": "1 2 3 4 5",
+        "expectedOutput": "5 4 3 2 1"
+      },
+      {
+        "input": "1 2",
+        "expectedOutput": "2 1"
+      },
+      {
+        "input": "1",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "",
+        "expectedOutput": ""
+      },
+      {
+        "input": "1 2 3",
+        "expectedOutput": "3 2 1"
+      },
+      {
+        "input": "5 4 3 2 1",
+        "expectedOutput": "1 2 3 4 5"
+      },
+      {
+        "input": "100",
+        "expectedOutput": "100"
+      },
+      {
+        "input": "1 1 1",
+        "expectedOutput": "1 1 1"
+      },
+      {
+        "input": "1 2 3 4 5 6 7",
+        "expectedOutput": "7 6 5 4 3 2 1"
+      },
+      {
+        "input": "-1 0 1",
+        "expectedOutput": "1 0 -1"
+      }
+    ]
+  },
+  {
+    "id": "20",
+    "title": "Merge Two Sorted Lists",
+    "difficulty": "Easy",
+    "concept": "Linked Lists",
+    "description": "You are given the heads of two sorted linked lists list1 and list2. Merge the two lists in a one sorted list. Return the merged list as space-separated values.",
+    "examples": [
+      {
+        "input": "1 2 4\n1 3 4",
+        "output": "1 1 2 3 4 4"
+      }
+    ],
+    "constraints": [
+      "The number of nodes in both lists is in the range [0, 50].",
+      "-100 <= Node.val <= 100",
+      "Both list1 and list2 are sorted in non-decreasing order."
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: space-separated elements of list 1\n# Line 2: space-separated elements of list 2\n# Write your solution here\ndef mergeTwoLists(list1_val, list2_val):\n    pass",
+      "javascript": "// Input format:\n// Line 1: space-separated elements of list 1\n// Line 2: space-separated elements of list 2\n// Write your solution here\nfunction mergeTwoLists(list1_val, list2_val) {\n    \n}",
+      "java": "// Input format:\n// Line 1: space-separated elements of list 1\n// Line 2: space-separated elements of list 2\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public String mergeTwoLists(String list1_val, String list2_val) {\n        return \"\";\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: space-separated elements of list 1\n// Line 2: space-separated elements of list 2\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    string mergeTwoLists(string list1_val, string list2_val) {\n        return \"\";\n    }\n};",
+      "c": "// Input format:\n// Line 1: space-separated elements of list 1\n// Line 2: space-separated elements of list 2\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nchar* mergeTwoLists(char* list1_val, char* list2_val) {\n    return \"\";\n}"
+    },
+    "testCases": [
+      {
+        "input": "1 2 4\n1 3 4",
+        "expectedOutput": "1 1 2 3 4 4"
+      },
+      {
+        "input": "\n",
+        "expectedOutput": ""
+      },
+      {
+        "input": "\n0",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "1 3 5\n2 4 6",
+        "expectedOutput": "1 2 3 4 5 6"
+      },
+      {
+        "input": "1\n2",
+        "expectedOutput": "1 2"
+      },
+      {
+        "input": "2\n1",
+        "expectedOutput": "1 2"
+      },
+      {
+        "input": "1 2 3\n",
+        "expectedOutput": "1 2 3"
+      },
+      {
+        "input": "0\n0",
+        "expectedOutput": "0 0"
+      },
+      {
+        "input": "5\n1 2 3",
+        "expectedOutput": "1 2 3 5"
+      },
+      {
+        "input": "1 1 1\n1 1 1",
+        "expectedOutput": "1 1 1 1 1 1"
+      }
+    ]
+  },
+  {
+    "id": "21",
+    "title": "Valid Parentheses",
+    "difficulty": "Easy",
+    "concept": "Stacks & Queues",
+    "description": "Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.",
+    "examples": [
+      {
+        "input": "()[]{}",
+        "output": "true"
+      }
+    ],
+    "constraints": [
+      "1 <= s.length <= 10^4",
+      "s consists of brackets only."
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: bracket string s\n# Write your solution here\ndef isValid(s):\n    pass",
+      "javascript": "// Input format:\n// Line 1: bracket string s\n// Write your solution here\nfunction isValid(s) {\n    \n}",
+      "java": "// Input format:\n// Line 1: bracket string s\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public boolean isValid(String s) {\n        return false;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: bracket string s\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    bool isValid(string s) {\n        return false;\n    }\n};",
+      "c": "// Input format:\n// Line 1: bracket string s\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nbool isValid(char* s) {\n    return false;\n}"
+    },
+    "testCases": [
+      {
+        "input": "()",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "()[]{}",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "(]",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "([)]",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "{[]}",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "{",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "]",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "((()))",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "({[]})",
+        "expectedOutput": "true"
+      }
+    ]
+  },
+  {
+    "id": "22",
+    "title": "Min Stack",
+    "difficulty": "Medium",
+    "concept": "Stacks & Queues",
+    "description": "Design a stack that supports push, pop, top, and retrieving the minimum element in constant time. Return the results for 'getMin' operations as space-separated string.",
+    "examples": [
+      {
+        "input": "[[\"push\",-2],[\"push\",0],[\"push\",-3],[\"getMin\"],[\"pop\"],[\"getMin\"]]",
+        "output": "-3 0"
+      }
+    ],
+    "constraints": [
+      "Methods push, pop, top, and getMin operations will be given as a JSON array."
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: JSON array of operations, e.g. [[\"push\", -2], [\"getMin\"]]\n# Write your solution here\ndef runMinStack(operations):\n    pass",
+      "javascript": "// Input format:\n// Line 1: JSON array of operations, e.g. [[\"push\", -2], [\"getMin\"]]\n// Write your solution here\nfunction runMinStack(operations) {\n    \n}",
+      "java": "// Input format:\n// Line 1: JSON array of operations, e.g. [[\"push\", -2], [\"getMin\"]]\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public String runMinStack(String operations) {\n        return \"\";\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: JSON array of operations, e.g. [[\"push\", -2], [\"getMin\"]]\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    string runMinStack(string operations) {\n        return \"\";\n    }\n};",
+      "c": "// Input format:\n// Line 1: JSON array of operations, e.g. [[\"push\", -2], [\"getMin\"]]\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nchar* runMinStack(char* operations) {\n    return \"\";\n}"
+    },
+    "testCases": [
+      {
+        "input": "[[\"push\",-2],[\"push\",0],[\"push\",-3],[\"getMin\"],[\"pop\"],[\"getMin\"]]",
+        "expectedOutput": "-3 0"
+      },
+      {
+        "input": "[[\"push\",1],[\"push\",2],[\"getMin\"],[\"pop\"],[\"getMin\"]]",
+        "expectedOutput": "1 1"
+      },
+      {
+        "input": "[[\"push\",0],[\"push\",1],[\"push\",0],[\"getMin\"],[\"pop\"],[\"getMin\"]]",
+        "expectedOutput": "0 0"
+      },
+      {
+        "input": "[[\"push\",-10],[\"getMin\"]]",
+        "expectedOutput": "-10"
+      },
+      {
+        "input": "[[\"push\",5],[\"push\",10],[\"getMin\"],[\"push\",2],[\"getMin\"]]",
+        "expectedOutput": "5 2"
+      },
+      {
+        "input": "[[\"push\",100],[\"push\",200],[\"getMin\"],[\"pop\"],[\"getMin\"]]",
+        "expectedOutput": "100 100"
+      },
+      {
+        "input": "[[\"push\",-5],[\"push\",-5],[\"getMin\"],[\"pop\"],[\"getMin\"]]",
+        "expectedOutput": "-5 -5"
+      },
+      {
+        "input": "[[\"push\",10],[\"push\",5],[\"push\",20],[\"getMin\"],[\"pop\"],[\"getMin\"]]",
+        "expectedOutput": "5 5"
+      },
+      {
+        "input": "[[\"push\",9],[\"getMin\"],[\"push\",8],[\"getMin\"],[\"push\",7],[\"getMin\"]]",
+        "expectedOutput": "9 8 7"
+      },
+      {
+        "input": "[[\"push\",1],[\"push\",0],[\"push\",-1],[\"getMin\"]]",
+        "expectedOutput": "-1"
+      }
+    ]
+  },
+  {
+    "id": "23",
+    "title": "Maximum Depth of Binary Tree",
+    "difficulty": "Easy",
+    "concept": "Trees",
+    "description": "Given the root of a binary tree, return its maximum depth. The input is provided in level-order traversal format, where null denotes a missing node.",
+    "examples": [
+      {
+        "input": "3 9 20 null null 15 7",
+        "output": "3"
+      }
+    ],
+    "constraints": [
+      "The number of nodes in the tree is in the range [0, 10^4].",
+      "-100 <= Node.val <= 100"
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: space-separated level-order nodes (e.g. \"3 9 20 null null 15 7\")\n# Write your solution here\ndef maxDepth(level_order):\n    pass",
+      "javascript": "// Input format:\n// Line 1: space-separated level-order nodes (e.g. \"3 9 20 null null 15 7\")\n// Write your solution here\nfunction maxDepth(level_order) {\n    \n}",
+      "java": "// Input format:\n// Line 1: space-separated level-order nodes (e.g. \"3 9 20 null null 15 7\")\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public int maxDepth(String level_order) {\n        return 0;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: space-separated level-order nodes (e.g. \"3 9 20 null null 15 7\")\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    int maxDepth(string level_order) {\n        return 0;\n    }\n};",
+      "c": "// Input format:\n// Line 1: space-separated level-order nodes (e.g. \"3 9 20 null null 15 7\")\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nint maxDepth(char* level_order) {\n    return 0;\n}"
+    },
+    "testCases": [
+      {
+        "input": "3 9 20 null null 15 7",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "1 null 2",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "1",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "1 2 3 4 5",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "1 2",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "1 null 2 null 3",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "1 2 3 4 5 6 7",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "1 2 null 3 null null null 4",
+        "expectedOutput": "4"
+      },
+      {
+        "input": "5 3 8 1 4 7 9",
+        "expectedOutput": "3"
+      }
+    ]
+  },
+  {
+    "id": "24",
+    "title": "Validate Binary Search Tree",
+    "difficulty": "Medium",
+    "concept": "Trees",
+    "description": "Given the root of a binary tree in level-order traversal format, return true if it is a valid binary search tree (BST), and false otherwise.",
+    "examples": [
+      {
+        "input": "2 1 3",
+        "output": "true"
+      }
+    ],
+    "constraints": [
+      "The number of nodes in the tree is in the range [1, 10^4].",
+      "-2^31 <= Node.val <= 2^31 - 1"
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: space-separated level-order nodes\n# Write your solution here\ndef isValidBST(level_order):\n    pass",
+      "javascript": "// Input format:\n// Line 1: space-separated level-order nodes\n// Write your solution here\nfunction isValidBST(level_order) {\n    \n}",
+      "java": "// Input format:\n// Line 1: space-separated level-order nodes\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public boolean isValidBST(String level_order) {\n        return false;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: space-separated level-order nodes\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    bool isValidBST(string level_order) {\n        return false;\n    }\n};",
+      "c": "// Input format:\n// Line 1: space-separated level-order nodes\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nbool isValidBST(char* level_order) {\n    return false;\n}"
+    },
+    "testCases": [
+      {
+        "input": "2 1 3",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "5 1 4 null null 3 6",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "1",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "5 4 6 null null 3 7",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "3 1 5 null 2 4 6",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "2 2 2",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "10 5 15 null null 6 20",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "4 2 6 1 3 5 7",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "5 3 7 1 4 6 8",
+        "expectedOutput": "true"
+      }
+    ]
+  },
+  {
+    "id": "25",
+    "title": "Climbing Stairs",
+    "difficulty": "Easy",
+    "concept": "Dynamic Programming",
+    "description": "You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?",
+    "examples": [
+      {
+        "input": "3",
+        "output": "3"
+      }
+    ],
+    "constraints": [
+      "1 <= n <= 45"
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: integer n\n# Write your solution here\ndef climbStairs(n):\n    pass",
+      "javascript": "// Input format:\n// Line 1: integer n\n// Write your solution here\nfunction climbStairs(n) {\n    \n}",
+      "java": "// Input format:\n// Line 1: integer n\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public int climbStairs(int n) {\n        return 0;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: integer n\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    int climbStairs(int n) {\n        return 0;\n    }\n};",
+      "c": "// Input format:\n// Line 1: integer n\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nint climbStairs(int n) {\n    return 0;\n}"
+    },
+    "testCases": [
+      {
+        "input": "1",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "2",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "3",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "4",
+        "expectedOutput": "5"
+      },
+      {
+        "input": "5",
+        "expectedOutput": "8"
+      },
+      {
+        "input": "6",
+        "expectedOutput": "13"
+      },
+      {
+        "input": "7",
+        "expectedOutput": "21"
+      },
+      {
+        "input": "8",
+        "expectedOutput": "34"
+      },
+      {
+        "input": "9",
+        "expectedOutput": "55"
+      },
+      {
+        "input": "10",
+        "expectedOutput": "89"
+      }
+    ]
+  },
+  {
+    "id": "26",
+    "title": "House Robber",
+    "difficulty": "Medium",
+    "concept": "Dynamic Programming",
+    "description": "You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses have security systems connected and it will automatically contact the police if two adjacent houses were broken into on the same night. Given an integer array nums representing the amount of money of each house, return the maximum amount of money you can rob tonight without alerting the police.",
+    "examples": [
+      {
+        "input": "4\n1 2 3 1",
+        "output": "4"
+      }
+    ],
+    "constraints": [
+      "1 <= nums.length <= 100",
+      "0 <= nums[i] <= 400"
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: size of array\n# Line 2: space-separated integers\n# Write your solution here\ndef rob(nums):\n    pass",
+      "javascript": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\n// Write your solution here\nfunction rob(nums) {\n    \n}",
+      "java": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public int rob(int[] nums) {\n        return 0;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    int rob(vector<int>& nums) {\n        return 0;\n    }\n};",
+      "c": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nint rob(int* nums, int numsSize) {\n    return 0;\n}"
+    },
+    "testCases": [
+      {
+        "input": "4\n1 2 3 1",
+        "expectedOutput": "4"
+      },
+      {
+        "input": "5\n2 7 9 3 1",
+        "expectedOutput": "12"
+      },
+      {
+        "input": "1\n0",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "2\n1 2",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "4\n2 1 1 2",
+        "expectedOutput": "4"
+      },
+      {
+        "input": "4\n5 1 1 5",
+        "expectedOutput": "10"
+      },
+      {
+        "input": "1\n1",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "3\n2 3 2",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "4\n10 1 1 10",
+        "expectedOutput": "20"
+      },
+      {
+        "input": "5\n1 3 1 3 100",
+        "expectedOutput": "103"
+      }
+    ]
+  },
+  {
+    "id": "27",
+    "title": "Coin Change",
+    "difficulty": "Medium",
+    "concept": "Dynamic Programming",
+    "description": "You are given an integer array coins representing coins of different denominations and an integer amount representing a total amount of money. Return the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return -1.",
+    "examples": [
+      {
+        "input": "1 2 5\n11",
+        "output": "3"
+      }
+    ],
+    "constraints": [
+      "1 <= coins.length <= 12",
+      "1 <= coins[i] <= 2^31 - 1",
+      "0 <= amount <= 10^4"
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: space-separated coin denominations\n# Line 2: target amount\n# Write your solution here\ndef coinChange(coins, amount):\n    pass",
+      "javascript": "// Input format:\n// Line 1: space-separated coin denominations\n// Line 2: target amount\n// Write your solution here\nfunction coinChange(coins, amount) {\n    \n}",
+      "java": "// Input format:\n// Line 1: space-separated coin denominations\n// Line 2: target amount\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public int coinChange(int[] coins, int amount) {\n        return -1;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: space-separated coin denominations\n// Line 2: target amount\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    int coinChange(vector<int>& coins, int amount) {\n        return -1;\n    }\n};",
+      "c": "// Input format:\n// Line 1: space-separated coin denominations\n// Line 2: target amount\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nint coinChange(int* coins, int coinsSize, int amount) {\n    return -1;\n}"
+    },
+    "testCases": [
+      {
+        "input": "1 5 11\n15",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "2\n3",
+        "expectedOutput": "-1"
+      },
+      {
+        "input": "1 2 5\n11",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "1\n0",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "2\n1",
+        "expectedOutput": "-1"
+      },
+      {
+        "input": "1 2 3\n6",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "1 5 10 25\n30",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "2 5 10 1\n27",
+        "expectedOutput": "4"
+      },
+      {
+        "input": "3 7 405 436\n8",
+        "expectedOutput": "-1"
+      },
+      {
+        "input": "1\n10",
+        "expectedOutput": "10"
+      }
+    ]
+  },
+  {
+    "id": "28",
+    "title": "Number of Islands",
+    "difficulty": "Medium",
+    "concept": "Graphs",
+    "description": "Given an m x n 2D binary grid grid which represents a map of '1's (land) and '0's (water), return the number of islands. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water. Input format: space-separated row elements, with rows on newlines.",
+    "examples": [
+      {
+        "input": "1 1 1 1 0\n1 1 0 1 0\n1 1 0 0 0\n0 0 0 0 0",
+        "output": "1"
+      }
+    ],
+    "constraints": [
+      "m == grid.length",
+      "n == grid[i].length",
+      "1 <= m, n <= 300",
+      "grid[i][j] is '0' or '1'."
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Space-separated grid values on multiple lines (e.g. \"1 1 0\\n0 1 0\")\n# Write your solution here\ndef numIslands(grid_str):\n    pass",
+      "javascript": "// Input format:\n// Space-separated grid values on multiple lines (e.g. \"1 1 0\\n0 1 0\")\n// Write your solution here\nfunction numIslands(grid_str) {\n    \n}",
+      "java": "// Input format:\n// Space-separated grid values on multiple lines (e.g. \"1 1 0\\n0 1 0\")\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public int numIslands(String grid_str) {\n        return 0;\n    }\n}",
+      "cpp": "// Input format:\n// Space-separated grid values on multiple lines (e.g. \"1 1 0\\n0 1 0\")\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    int numIslands(string grid_str) {\n        return 0;\n    }\n};",
+      "c": "// Input format:\n// Space-separated grid values on multiple lines (e.g. \"1 1 0\\n0 1 0\")\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nint numIslands(char* grid_str) {\n    return 0;\n}"
+    },
+    "testCases": [
+      {
+        "input": "1 1 1 1 0\n1 1 0 1 0\n1 1 0 0 0\n0 0 0 0 0",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "1 1 0 0 0\n1 1 0 0 0\n0 0 1 0 0\n0 0 0 1 1",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "1",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "0",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "1 0\n0 1",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "1 1\n1 1",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "1 0 1\n0 0 0\n1 0 1",
+        "expectedOutput": "4"
+      },
+      {
+        "input": "1 1 1\n0 0 0\n1 1 1",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "1 0\n0 0",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "0 0\n0 0",
+        "expectedOutput": "0"
+      }
+    ]
+  },
+  {
+    "id": "29",
+    "title": "Clone Graph",
+    "difficulty": "Medium",
+    "concept": "Graphs",
+    "description": "Given a reference of a node in a connected undirected graph, return a deep copy (clone) of the graph. The input format represents graph edges: \"n=4,edges=[[1,2],[1,4],[2,3],[3,4]]\". Return the number of cloned nodes.",
+    "examples": [
+      {
+        "input": "n=4,edges=[[1,2],[1,4],[2,3],[3,4]]",
+        "output": "4"
+      }
+    ],
+    "constraints": [
+      "The number of nodes in the graph is between 0 and 100.",
+      "1 <= Node.val <= 100",
+      "Node.val is unique for each node."
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Adjacency list string (e.g. \"n=4,edges=[[1,2],[1,4],[2,3],[3,4]]\")\n# Write your solution here\ndef cloneGraph(graph_input):\n    pass",
+      "javascript": "// Input format:\n// Adjacency list string (e.g. \"n=4,edges=[[1,2],[1,4],[2,3],[3,4]]\")\n// Write your solution here\nfunction cloneGraph(graph_input) {\n    \n}",
+      "java": "// Input format:\n// Adjacency list string (e.g. \"n=4,edges=[[1,2],[1,4],[2,3],[3,4]]\")\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public int cloneGraph(String graph_input) {\n        return 0;\n    }\n}",
+      "cpp": "// Input format:\n// Adjacency list string (e.g. \"n=4,edges=[[1,2],[1,4],[2,3],[3,4]]\")\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    int cloneGraph(string graph_input) {\n        return 0;\n    }\n};",
+      "c": "// Input format:\n// Adjacency list string (e.g. \"n=4,edges=[[1,2],[1,4],[2,3],[3,4]]\")\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nint cloneGraph(char* graph_input) {\n    return 0;\n}"
+    },
+    "testCases": [
+      {
+        "input": "n=4,edges=[[1,2],[1,4],[2,3],[3,4]]",
+        "expectedOutput": "4"
+      },
+      {
+        "input": "n=1,edges=[]",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "n=0,edges=[]",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "n=2,edges=[[1,2]]",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "n=3,edges=[[1,2],[2,3]]",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "n=3,edges=[[1,2],[2,3],[3,1]]",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "n=5,edges=[[1,2],[1,3],[1,4],[1,5]]",
+        "expectedOutput": "5"
+      },
+      {
+        "input": "n=4,edges=[[1,2],[2,3],[3,4],[4,1],[1,3],[2,4]]",
+        "expectedOutput": "4"
+      },
+      {
+        "input": "n=6,edges=[[1,2],[2,3],[3,4],[4,5],[5,6]]",
+        "expectedOutput": "6"
+      },
+      {
+        "input": "n=5,edges=[[1,2],[2,3],[3,4],[4,5],[5,1]]",
+        "expectedOutput": "5"
+      }
+    ]
+  },
+  {
+    "id": "30",
+    "title": "Power of Two",
+    "difficulty": "Easy",
+    "concept": "Recursion",
+    "description": "Given an integer n, return true if it is a power of two. Otherwise, return false. An integer n is a power of two if there exists an integer x such that n == 2^x.",
+    "examples": [
+      {
+        "input": "1",
+        "output": "true"
+      }
+    ],
+    "constraints": [
+      "-2^31 <= n <= 2^31 - 1"
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: integer n\n# Write your solution here\ndef isPowerOfTwo(n):\n    pass",
+      "javascript": "// Input format:\n// Line 1: integer n\n// Write your solution here\nfunction isPowerOfTwo(n) {\n    \n}",
+      "java": "// Input format:\n// Line 1: integer n\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public boolean isPowerOfTwo(int n) {\n        return false;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: integer n\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    bool isPowerOfTwo(int n) {\n        return false;\n    }\n};",
+      "c": "// Input format:\n// Line 1: integer n\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nbool isPowerOfTwo(int n) {\n    return false;\n}"
+    },
+    "testCases": [
+      {
+        "input": "1",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "16",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "3",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "4",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "5",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "0",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "-1",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "1073741824",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "2",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "7",
+        "expectedOutput": "false"
+      }
+    ]
+  },
+  {
+    "id": "31",
+    "title": "Generate Parentheses",
+    "difficulty": "Medium",
+    "concept": "Recursion",
+    "description": "Given n pairs of parentheses, return the count of all combinations of well-formed parentheses.",
+    "examples": [
+      {
+        "input": "3",
+        "output": "5"
+      }
+    ],
+    "constraints": [
+      "1 <= n <= 8"
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: integer n\n# Write your solution here\ndef generateParenthesisCount(n):\n    pass",
+      "javascript": "// Input format:\n// Line 1: integer n\n// Write your solution here\nfunction generateParenthesisCount(n) {\n    \n}",
+      "java": "// Input format:\n// Line 1: integer n\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public int generateParenthesisCount(int n) {\n        return 0;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: integer n\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    int generateParenthesisCount(int n) {\n        return 0;\n    }\n};",
+      "c": "// Input format:\n// Line 1: integer n\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nint generateParenthesisCount(int n) {\n    return 0;\n}"
+    },
+    "testCases": [
+      {
+        "input": "1",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "2",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "3",
+        "expectedOutput": "5"
+      },
+      {
+        "input": "4",
+        "expectedOutput": "14"
+      },
+      {
+        "input": "5",
+        "expectedOutput": "42"
+      },
+      {
+        "input": "6",
+        "expectedOutput": "132"
+      },
+      {
+        "input": "7",
+        "expectedOutput": "429"
+      },
+      {
+        "input": "8",
+        "expectedOutput": "1430"
+      },
+      {
+        "input": "0",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "9",
+        "expectedOutput": "4862"
+      }
+    ]
+  },
+  {
+    "id": "32",
+    "title": "Reverse String",
+    "difficulty": "Easy",
+    "concept": "Strings",
+    "description": "Write a function that reverses a string. The input string is given on a single line.",
+    "examples": [
+      {
+        "input": "hello",
+        "output": "olleh"
+      }
+    ],
+    "constraints": [
+      "1 <= s.length <= 10^5"
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: string s\n# Write your solution here\ndef reverseString(s):\n    pass",
+      "javascript": "// Input format:\n// Line 1: string s\n// Write your solution here\nfunction reverseString(s) {\n    \n}",
+      "java": "// Input format:\n// Line 1: string s\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public String reverseString(String s) {\n        return \"\";\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: string s\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    string reverseString(string s) {\n        return \"\";\n    }\n};",
+      "c": "// Input format:\n// Line 1: string s\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nchar* reverseString(char* s) {\n    return \"\";\n}"
+    },
+    "testCases": [
+      {
+        "input": "hello",
+        "expectedOutput": "olleh"
+      },
+      {
+        "input": "Hannah",
+        "expectedOutput": "hannaH"
+      },
+      {
+        "input": "a",
+        "expectedOutput": "a"
+      },
+      {
+        "input": "",
+        "expectedOutput": ""
+      },
+      {
+        "input": "abcde",
+        "expectedOutput": "edcba"
+      },
+      {
+        "input": "racecar",
+        "expectedOutput": "racecar"
+      },
+      {
+        "input": "OpenAI",
+        "expectedOutput": "IAnepO"
+      },
+      {
+        "input": "12345",
+        "expectedOutput": "54321"
+      },
+      {
+        "input": "a b c",
+        "expectedOutput": "c b a"
+      },
+      {
+        "input": "Hello World",
+        "expectedOutput": "dlroW olleH"
+      }
+    ]
+  },
+  {
+    "id": "33",
+    "title": "Longest Common Prefix",
+    "difficulty": "Easy",
+    "concept": "Strings",
+    "description": "Write a function to find the longest common prefix string amongst an array of strings. If there is no common prefix, return an empty string \"\".",
+    "examples": [
+      {
+        "input": "flower flow flight",
+        "output": "fl"
+      }
+    ],
+    "constraints": [
+      "1 <= strs.length <= 200",
+      "0 <= strs[i].length <= 200",
+      "strs[i] consists of only lowercase English letters."
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: space-separated strings\n# Write your solution here\ndef longestCommonPrefix(strs):\n    pass",
+      "javascript": "// Input format:\n// Line 1: space-separated strings\n// Write your solution here\nfunction longestCommonPrefix(strs) {\n    \n}",
+      "java": "// Input format:\n// Line 1: space-separated strings\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public String longestCommonPrefix(String[] strs) {\n        return \"\";\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: space-separated strings\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    string longestCommonPrefix(vector<string>& strs) {\n        return \"\";\n    }\n};",
+      "c": "// Input format:\n// Line 1: space-separated strings\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nchar* longestCommonPrefix(char** strs, int strsSize) {\n    return \"\";\n}"
+    },
+    "testCases": [
+      {
+        "input": "flower flow flight",
+        "expectedOutput": "fl"
+      },
+      {
+        "input": "dog racecar car",
+        "expectedOutput": ""
+      },
+      {
+        "input": "a",
+        "expectedOutput": "a"
+      },
+      {
+        "input": "ab a",
+        "expectedOutput": "a"
+      },
+      {
+        "input": "abc abc abc",
+        "expectedOutput": "abc"
+      },
+      {
+        "input": "",
+        "expectedOutput": ""
+      },
+      {
+        "input": "c c",
+        "expectedOutput": "c"
+      },
+      {
+        "input": "abc abcd abcde",
+        "expectedOutput": "abc"
+      },
+      {
+        "input": "throne throne",
+        "expectedOutput": "throne"
+      },
+      {
+        "input": "interspecies interstellar interstate",
+        "expectedOutput": "inters"
+      }
+    ]
+  },
+  {
+    "id": "34",
+    "title": "Anagram Check",
+    "difficulty": "Easy",
+    "concept": "Strings",
+    "description": "Given two strings s and t, return true if t is an anagram of s, and false otherwise. An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase.",
+    "examples": [
+      {
+        "input": "anagram\nnagaram",
+        "output": "true"
+      }
+    ],
+    "constraints": [
+      "1 <= s.length, t.length <= 5 * 10^4",
+      "s and t consist of lowercase English letters."
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: string s\n# Line 2: string t\n# Write your solution here\ndef isAnagram(s, t):\n    pass",
+      "javascript": "// Input format:\n// Line 1: string s\n// Line 2: string t\n// Write your solution here\nfunction isAnagram(s, t) {\n    \n}",
+      "java": "// Input format:\n// Line 1: string s\n// Line 2: string t\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public boolean isAnagram(String s, String t) {\n        return false;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: string s\n// Line 2: string t\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    bool isAnagram(string s, string t) {\n        return false;\n    }\n};",
+      "c": "// Input format:\n// Line 1: string s\n// Line 2: string t\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nbool isAnagram(char* s, char* t) {\n    return false;\n}"
+    },
+    "testCases": [
+      {
+        "input": "anagram\nnagaram",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "rat\ncar",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "a\na",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "ab\nba",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "\n",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "abc\ncba",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "hello\nworld",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "listen\nsilent",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "triangle\nintegral",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "aab\nbba",
+        "expectedOutput": "false"
+      }
+    ]
+  },
+  {
+    "id": "35",
+    "title": "Fibonacci Number",
+    "difficulty": "Easy",
+    "concept": "Dynamic Programming",
+    "description": "The Fibonacci numbers, commonly denoted F(n) form a sequence, called the Fibonacci sequence, such that each number is the sum of the two preceding ones, starting from 0 and 1. Given n, calculate F(n).",
+    "examples": [
+      {
+        "input": "2",
+        "output": "1"
+      }
+    ],
+    "constraints": [
+      "0 <= n <= 30"
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: integer n\n# Write your solution here\ndef fib(n):\n    pass",
+      "javascript": "// Input format:\n// Line 1: integer n\n// Write your solution here\nfunction fib(n) {\n    \n}",
+      "java": "// Input format:\n// Line 1: integer n\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public int fib(int n) {\n        return 0;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: integer n\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    int fib(int n) {\n        return 0;\n    }\n};",
+      "c": "// Input format:\n// Line 1: integer n\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nint fib(int n) {\n    return 0;\n}"
+    },
+    "testCases": [
+      {
+        "input": "0",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "1",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "2",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "3",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "4",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "5",
+        "expectedOutput": "5"
+      },
+      {
+        "input": "6",
+        "expectedOutput": "8"
+      },
+      {
+        "input": "7",
+        "expectedOutput": "13"
+      },
+      {
+        "input": "8",
+        "expectedOutput": "21"
+      },
+      {
+        "input": "9",
+        "expectedOutput": "34"
+      }
+    ]
+  },
+  {
+    "id": "36",
+    "title": "Search Insert Position",
+    "difficulty": "Easy",
+    "concept": "Binary Search",
+    "description": "Given a sorted array of distinct integers and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.",
+    "examples": [
+      {
+        "input": "1 3 5 6\n5",
+        "output": "2"
+      }
+    ],
+    "constraints": [
+      "1 <= nums.length <= 10^4",
+      "-10^4 <= nums[i], target <= 10^4",
+      "nums contains distinct values sorted in ascending order."
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: space-separated sorted integers\n# Line 2: target integer\n# Write your solution here\ndef searchInsert(nums, target):\n    pass",
+      "javascript": "// Input format:\n// Line 1: space-separated sorted integers\n// Line 2: target integer\n// Write your solution here\nfunction searchInsert(nums, target) {\n    \n}",
+      "java": "// Input format:\n// Line 1: space-separated sorted integers\n// Line 2: target integer\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public int searchInsert(int[] nums, int target) {\n        return 0;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: space-separated sorted integers\n// Line 2: target integer\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    int searchInsert(vector<int>& nums, int target) {\n        return 0;\n    }\n};",
+      "c": "// Input format:\n// Line 1: space-separated sorted integers\n// Line 2: target integer\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nint searchInsert(int* nums, int numsSize, int target) {\n    return 0;\n}"
+    },
+    "testCases": [
+      {
+        "input": "1 3 5 6\n5",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "1 3 5 6\n2",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "1 3 5 6\n7",
+        "expectedOutput": "4"
+      },
+      {
+        "input": "1 3 5 6\n0",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "1\n0",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "1\n2",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "1 3\n2",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "1 3 5\n4",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "1 2 4 6 7\n5",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "1 2 3 4 5\n3",
+        "expectedOutput": "2"
+      }
+    ]
+  },
+  {
+    "id": "37",
+    "title": "Pascal's Triangle Row",
+    "difficulty": "Easy",
+    "concept": "Arrays",
+    "description": "Given an integer rowIndex, return the rowIndex-th (0-indexed) row of Pascal's triangle as a space-separated string of integers.",
+    "examples": [
+      {
+        "input": "3",
+        "output": "1 3 3 1"
+      }
+    ],
+    "constraints": [
+      "0 <= rowIndex <= 33"
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: 0-indexed row index rowIndex\n# Write your solution here\ndef getRow(rowIndex):\n    pass",
+      "javascript": "// Input format:\n// Line 1: 0-indexed row index rowIndex\n// Write your solution here\nfunction getRow(rowIndex) {\n    \n}",
+      "java": "// Input format:\n// Line 1: 0-indexed row index rowIndex\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public String getRow(int rowIndex) {\n        return \"\";\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: 0-indexed row index rowIndex\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    string getRow(int rowIndex) {\n        return \"\";\n    }\n};",
+      "c": "// Input format:\n// Line 1: 0-indexed row index rowIndex\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nchar* getRow(int rowIndex) {\n    return \"\";\n}"
+    },
+    "testCases": [
+      {
+        "input": "0",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "1",
+        "expectedOutput": "1 1"
+      },
+      {
+        "input": "2",
+        "expectedOutput": "1 2 1"
+      },
+      {
+        "input": "3",
+        "expectedOutput": "1 3 3 1"
+      },
+      {
+        "input": "4",
+        "expectedOutput": "1 4 6 4 1"
+      },
+      {
+        "input": "5",
+        "expectedOutput": "1 5 10 10 5 1"
+      },
+      {
+        "input": "6",
+        "expectedOutput": "1 6 15 20 15 6 1"
+      },
+      {
+        "input": "7",
+        "expectedOutput": "1 7 21 35 35 21 7 1"
+      },
+      {
+        "input": "8",
+        "expectedOutput": "1 8 28 56 70 56 28 8 1"
+      },
+      {
+        "input": "9",
+        "expectedOutput": "1 9 36 84 126 126 84 36 9 1"
+      }
+    ]
+  },
+  {
+    "id": "38",
+    "title": "First Bad Version",
+    "difficulty": "Easy",
+    "concept": "Binary Search",
+    "description": "You are a product manager and currently leading a team to develop a new product. Unfortunately, the latest version of your product fails the quality check. Since each version is developed based on the previous version, all the versions after a bad version are also bad. Given n versions [1, 2, ..., n] and the first bad version, write a program to find the first bad one.",
+    "examples": [
+      {
+        "input": "5 4",
+        "output": "4"
+      }
+    ],
+    "constraints": [
+      "1 <= bad <= n <= 2^31 - 1"
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: total versions n, space-separated from first bad version\n# Write your solution here\ndef firstBadVersion(n, isBadVersion):\n    pass",
+      "javascript": "// Input format:\n// Line 1: total versions n, space-separated from first bad version\n// Write your solution here\nfunction firstBadVersion(n, isBadVersion) {\n    \n}",
+      "java": "// Input format:\n// Line 1: total versions n, space-separated from first bad version\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public int firstBadVersion(int n, java.util.function.IntPredicate isBadVersion) {\n        return 0;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: total versions n, space-separated from first bad version\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    int firstBadVersion(int n, bool (*isBadVersion)(int)) {\n        return 0;\n    }\n};",
+      "c": "// Input format:\n// Line 1: total versions n, space-separated from first bad version\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nint firstBadVersion(int n, bool (*isBadVersion)(int)) {\n    return 0;\n}"
+    },
+    "testCases": [
+      {
+        "input": "5 4",
+        "expectedOutput": "4"
+      },
+      {
+        "input": "1 1",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "10 1",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "10 10",
+        "expectedOutput": "10"
+      },
+      {
+        "input": "100 50",
+        "expectedOutput": "50"
+      },
+      {
+        "input": "1000000000 999999999",
+        "expectedOutput": "999999999"
+      },
+      {
+        "input": "7 4",
+        "expectedOutput": "4"
+      },
+      {
+        "input": "20 15",
+        "expectedOutput": "15"
+      },
+      {
+        "input": "3 2",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "50 1",
+        "expectedOutput": "1"
+      }
+    ]
+  },
+  {
+    "id": "39",
+    "title": "Sqrt(x)",
+    "difficulty": "Easy",
+    "concept": "Binary Search",
+    "description": "Given a non-negative integer x, return the square root of x rounded down to the nearest integer. The returned integer should be non-negative as well. You must not use any built-in exponent function or operator.",
+    "examples": [
+      {
+        "input": "8",
+        "output": "2",
+        "explanation": "The square root of 8 is 2.82842..., and since we round it down to the nearest integer, 2 is returned."
+      }
+    ],
+    "constraints": [
+      "0 <= x <= 2^31 - 1"
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: non-negative integer x\n# Write your solution here\ndef mySqrt(x):\n    pass",
+      "javascript": "// Input format:\n// Line 1: non-negative integer x\n// Write your solution here\nfunction mySqrt(x) {\n    \n}",
+      "java": "// Input format:\n// Line 1: non-negative integer x\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public int mySqrt(int x) {\n        return 0;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: non-negative integer x\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    int mySqrt(int x) {\n        return 0;\n    }\n};",
+      "c": "// Input format:\n// Line 1: non-negative integer x\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nint mySqrt(int x) {\n    return 0;\n}"
+    },
+    "testCases": [
+      {
+        "input": "0",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "1",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "4",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "8",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "9",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "16",
+        "expectedOutput": "4"
+      },
+      {
+        "input": "25",
+        "expectedOutput": "5"
+      },
+      {
+        "input": "2147395599",
+        "expectedOutput": "46339"
+      },
+      {
+        "input": "100",
+        "expectedOutput": "10"
+      },
+      {
+        "input": "2",
+        "expectedOutput": "1"
+      }
+    ]
+  },
+  {
+    "id": "40",
+    "title": "Majority Element",
+    "difficulty": "Easy",
+    "concept": "Arrays",
+    "description": "Given an array nums of size n, return the majority element. The majority element is the element that appears more than ⌊n / 2⌋ times. You may assume that the majority element always exists in the array.",
+    "examples": [
+      {
+        "input": "3\n3 2 3",
+        "output": "3"
+      }
+    ],
+    "constraints": [
+      "n == nums.length",
+      "1 <= n <= 5 * 10^4",
+      "-10^9 <= nums[i] <= 10^9"
+    ],
+    "starterCode": {
+      "python": "# Input format:\n# Line 1: size of array\n# Line 2: space-separated integers\n# Write your solution here\ndef majorityElement(nums):\n    pass",
+      "javascript": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\n// Write your solution here\nfunction majorityElement(nums) {\n    \n}",
+      "java": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\nimport java.util.*;\n\npublic class Solution {\n    // Write your solution here\n    public int majorityElement(int[] nums) {\n        return 0;\n    }\n}",
+      "cpp": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\n#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\n// Write your solution here\nclass Solution {\npublic:\n    int majorityElement(vector<int>& nums) {\n        return 0;\n    }\n};",
+      "c": "// Input format:\n// Line 1: size of array\n// Line 2: space-separated integers\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n// Write your solution here\nint majorityElement(int* nums, int numsSize) {\n    return 0;\n}"
+    },
+    "testCases": [
+      {
+        "input": "3\n3 2 3",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "7\n2 2 1 1 1 2 2",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "1\n1",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "3\n1 1 2",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "3\n3 3 4",
+        "expectedOutput": "3"
+      },
+      {
+        "input": "3\n1 2 1",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "3\n6 5 5",
+        "expectedOutput": "5"
+      },
+      {
+        "input": "7\n1 1 1 1 2 2 2",
+        "expectedOutput": "1"
+      },
+      {
+        "input": "3\n2 1 2",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "6\n1 2 2 2 1 2",
+        "expectedOutput": "2"
+      }
+    ]
   }
 ]
