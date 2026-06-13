@@ -30,8 +30,8 @@ export default function ParticleBackground() {
         y: Math.random() * canvas.height,
         vx: (Math.random() - 0.5) * 0.3,
         vy: (Math.random() - 0.5) * 0.3,
-        size: Math.random() * 2 + 0.5,
-        opacity: Math.random() * 0.4 + 0.05,
+        size: Math.random() * 3 + 1,
+        opacity: Math.random() * 0.5 + 0.15,
         color: colors[Math.floor(Math.random() * colors.length)]
       })
     }
@@ -63,7 +63,7 @@ export default function ParticleBackground() {
             ctx.beginPath()
             ctx.moveTo(particles[i].x, particles[i].y)
             ctx.lineTo(particles[j].x, particles[j].y)
-            ctx.strokeStyle = `rgba(139,92,246,${0.04 * (1 - dist / 120)})`
+            ctx.strokeStyle = `rgba(139,92,246,${0.1 * (1 - dist / 120)})`
             ctx.lineWidth = 0.5
             ctx.stroke()
           }
@@ -89,8 +89,8 @@ export default function ParticleBackground() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.6 }}
+      className="fixed inset-0 w-full h-full pointer-events-none z-0"
+      style={{ opacity: 0.8 }}
     />
   )
 }
