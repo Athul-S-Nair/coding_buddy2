@@ -1,13 +1,6 @@
-const PISTON_URL = 'https://emkc.org/api/v2/piston/execute';
+const JUDGE0_URL = 'https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true';
 
-const LANGUAGE_MAP = {
-  71: { language: 'python', version: '3.10.0' },
-  50: { language: 'c', version: '10.2.0' },
-  54: { language: 'c++', version: '10.2.0' },
-  62: { language: 'java', version: '15.0.2' },
-  63: { language: 'javascript', version: '18.15.0' },
-  75: { language: 'c', version: '10.2.0' }
-};
+const SUPPORTED_LANGUAGES = new Set([50, 54, 62, 63, 71, 75]);
 
 function normalizeOutput(output) {
   return (output || '').trim().split('\n')
@@ -15,39 +8,36 @@ function normalizeOutput(output) {
 }
 
 async function executeCode({ source_code, language_id, stdin = '' }) {
-  const runtime = LANGUAGE_MAP[parseInt(language_id, 10)];
-  if (!runtime) throw new Error(`Unsupported language_id: ${language_id}`);
+  const apiKey = process.env.RAPIDAPI_KEY;
+  if (!apiKey) throw new Error('RAPIDAPI_KEY environment variable is not set');
 
-  const response = await fetch(PISTON_URL, {
+  const langId = parseInt(language_id, 10);
+  if (!SUPPORTED_LANGUAGES.has(langId)) {
+    throw new Error(`Unsupported language_id: ${language_id}`);
+  }
+
+  const response = await fetch(JUDGE0_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      language: runtime.language,
-      version: runtime.version,
-      files: [{ content: source_code }],
-      stdin
-    })
+    headers: {
+      'Content-Type': 'application/json',
+      'X-RapidAPI-Key': apiKey,
+      'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
+    },
+    body: JSON.stringify({ source_code, language_id: langId, stdin: stdin || '' })
   });
 
-  if (!response.ok) throw new Error(`Piston error: ${response.status}`);
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Judge0 error ${response.status}: ${text}`);
+  }
 
   const data = await response.json();
-  const run = data.run || {};
-  const compile = data.compile || {};
-  const hasCompileError = compile.code !== undefined &&
-                          compile.code !== 0 && compile.stderr;
-  const hasRuntimeError = run.code !== undefined && run.code !== 0;
 
   return {
-    status: {
-      id: hasCompileError ? 6 : hasRuntimeError ? 11 : 3,
-      description: hasCompileError ? 'Compilation Error'
-                 : hasRuntimeError ? 'Runtime Error'
-                 : 'Accepted'
-    },
-    stdout: run.stdout || '',
-    stderr: run.stderr || '',
-    compile_output: compile.stderr || ''
+    status: data.status || { id: 11, description: 'Runtime Error' },
+    stdout: data.stdout || '',
+    stderr: data.stderr || '',
+    compile_output: data.compile_output || ''
   };
 }
 
