@@ -64,7 +64,7 @@ function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
 const Mascot = dynamic(() => import('./components/Mascot'), { ssr: false })
 
 interface Problem {
-  id: string
+  id: string | number
   title: string
   difficulty: 'Easy' | 'Medium' | 'Hard'
 }
@@ -192,8 +192,9 @@ export default function Home() {
 
   // Filter problems
   const filteredProblems = problems.filter(p => {
-    const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.id === searchQuery
-    const matchesDifficulty = selectedDifficulty === 'All' || p.difficulty === selectedDifficulty
+    const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || String(p.id) === searchQuery
+    const matchesDifficulty = selectedDifficulty === 'All' || 
+      p.difficulty?.trim() === selectedDifficulty
     return matchesSearch && matchesDifficulty
   })
 
@@ -202,9 +203,9 @@ export default function Home() {
   const totalMedium = problems.filter(p => p.difficulty === 'Medium').length
   const totalHard = problems.filter(p => p.difficulty === 'Hard').length
 
-  const solvedEasy = progress ? problems.filter(p => p.difficulty === 'Easy' && progress.solvedProblems.includes(p.id)).length : 0
-  const solvedMedium = progress ? problems.filter(p => p.difficulty === 'Medium' && progress.solvedProblems.includes(p.id)).length : 0
-  const solvedHard = progress ? problems.filter(p => p.difficulty === 'Hard' && progress.solvedProblems.includes(p.id)).length : 0
+  const solvedEasy = progress ? problems.filter(p => p.difficulty === 'Easy' && progress.solvedProblems.includes(String(p.id))).length : 0
+  const solvedMedium = progress ? problems.filter(p => p.difficulty === 'Medium' && progress.solvedProblems.includes(String(p.id))).length : 0
+  const solvedHard = progress ? problems.filter(p => p.difficulty === 'Hard' && progress.solvedProblems.includes(String(p.id))).length : 0
 
   return (
     <div className="min-h-screen bg-[#080b11] text-[#f3f4f6] pb-12 relative overflow-hidden">
@@ -356,7 +357,7 @@ export default function Home() {
           ) : (
             <div className="space-y-3 animate-fade-in-up">
               {filteredProblems.map((problem) => {
-                const isSolved = progress?.solvedProblems.includes(problem.id)
+                const isSolved = progress?.solvedProblems.includes(String(problem.id))
                 return (
                   <LinkComponent
                     key={problem.id}

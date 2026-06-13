@@ -13,7 +13,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:id', (req, res) => {
-  const problem = problems.find((item) => item.id === req.params.id);
+  const problem = problems.find((item) => String(item.id) === req.params.id);
   if (!problem) {
     return res.status(404).json({ error: 'Problem not found' });
   }
