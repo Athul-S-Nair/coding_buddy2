@@ -30,6 +30,30 @@
       {
         "input": "another ignored",
         "expectedOutput": "Hello, World!"
+      },
+      {
+        "input": "123",
+        "expectedOutput": "Hello, World!"
+      },
+      {
+        "input": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "expectedOutput": "Hello, World!"
+      },
+      {
+        "input": "-1",
+        "expectedOutput": "Hello, World!"
+      },
+      {
+        "input": "hello",
+        "expectedOutput": "Hello, World!"
+      },
+      {
+        "input": "   ",
+        "expectedOutput": "Hello, World!"
+      },
+      {
+        "input": "special!@#$%",
+        "expectedOutput": "Hello, World!"
       }
     ]
   },
@@ -64,6 +88,30 @@
       {
         "input": "EdgeCase123",
         "expectedOutput": "EdgeCase123"
+      },
+      {
+        "input": "",
+        "expectedOutput": ""
+      },
+      {
+        "input": "a",
+        "expectedOutput": "a"
+      },
+      {
+        "input": "all_same_all_same",
+        "expectedOutput": "all_same_all_same"
+      },
+      {
+        "input": "-99999",
+        "expectedOutput": "-99999"
+      },
+      {
+        "input": "a b c d e f g",
+        "expectedOutput": "a b c d e f g"
+      },
+      {
+        "input": "   leading and trailing   ",
+        "expectedOutput": "   leading and trailing   "
       }
     ]
   },
@@ -98,6 +146,30 @@
       {
         "input": "-100\n-200",
         "expectedOutput": "-300"
+      },
+      {
+        "input": "0\n0",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "1000\n1000",
+        "expectedOutput": "2000"
+      },
+      {
+        "input": "-1000\n-1000",
+        "expectedOutput": "-2000"
+      },
+      {
+        "input": "1000\n-1000",
+        "expectedOutput": "0"
+      },
+      {
+        "input": "999999\n1",
+        "expectedOutput": "1000000"
+      },
+      {
+        "input": "-999999\n-1",
+        "expectedOutput": "-1000000"
       }
     ]
   },
@@ -134,6 +206,30 @@
       {
         "input": "5\n-1 -2 -3 -4 -5\n-8",
         "expectedOutput": "2 4"
+      },
+      {
+        "input": "2\n1 2\n3",
+        "expectedOutput": "0 1"
+      },
+      {
+        "input": "4\n1 5 8 10\n18",
+        "expectedOutput": "2 3"
+      },
+      {
+        "input": "5\n10 -5 3 7 2\n12",
+        "expectedOutput": "0 4"
+      },
+      {
+        "input": "6\n100 200 300 400 500 600\n1100",
+        "expectedOutput": "4 5"
+      },
+      {
+        "input": "4\n-100 -50 0 50\n-150",
+        "expectedOutput": "0 1"
+      },
+      {
+        "input": "5\n2 2 3 4 5\n4",
+        "expectedOutput": "0 1"
       }
     ]
   },
@@ -168,6 +264,30 @@
       {
         "input": "racecar",
         "expectedOutput": "racecar"
+      },
+      {
+        "input": "12345",
+        "expectedOutput": "54321"
+      },
+      {
+        "input": "ab",
+        "expectedOutput": "ba"
+      },
+      {
+        "input": "CodingBuddy",
+        "expectedOutput": "yddubgnidoC"
+      },
+      {
+        "input": "AllSameValues",
+        "expectedOutput": "seulaVemaSllA"
+      },
+      {
+        "input": "a b c",
+        "expectedOutput": "c b a"
+      },
+      {
+        "input": "A",
+        "expectedOutput": "A"
       }
     ]
   },
@@ -201,6 +321,30 @@
       },
       {
         "input": "abba",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "abacaba",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "ab",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "abcdecba",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "aaaaaa",
+        "expectedOutput": "true"
+      },
+      {
+        "input": "Palindromes",
+        "expectedOutput": "false"
+      },
+      {
+        "input": "detartrated",
         "expectedOutput": "true"
       }
     ]
