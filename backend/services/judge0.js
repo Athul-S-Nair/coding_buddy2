@@ -1,6 +1,13 @@
-const JUDGE0_URL = 'https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true';
+const WANDBOX_URL = 'https://wandbox.org/api/compile.json';
 
-const SUPPORTED_LANGUAGES = new Set([50, 54, 62, 63, 71, 75]);
+const LANGUAGE_MAP = {
+  71: { compiler: 'cpython-3.12.7' },
+  50: { compiler: 'gcc-13.2.0-c' },
+  54: { compiler: 'gcc-13.2.0' },
+  62: { compiler: 'openjdk-jdk-21+35' },
+  63: { compiler: 'nodejs-18.20.4' },
+  75: { compiler: 'gcc-13.2.0-c' }
+};
 
 function normalizeOutput(output) {
   return (output || '').trim().split('\n')
@@ -8,36 +15,43 @@ function normalizeOutput(output) {
 }
 
 async function executeCode({ source_code, language_id, stdin = '' }) {
-  const apiKey = process.env.RAPIDAPI_KEY;
-  if (!apiKey) throw new Error('RAPIDAPI_KEY environment variable is not set');
+  const runtime = LANGUAGE_MAP[parseInt(language_id, 10)];
+  if (!runtime) throw new Error(`Unsupported language_id: ${language_id}`);
 
-  const langId = parseInt(language_id, 10);
-  if (!SUPPORTED_LANGUAGES.has(langId)) {
-    throw new Error(`Unsupported language_id: ${language_id}`);
-  }
+  const body = {
+    compiler: runtime.compiler,
+    code: source_code,
+    stdin: stdin || ''
+  };
 
-  const response = await fetch(JUDGE0_URL, {
+  const response = await fetch(WANDBOX_URL, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-RapidAPI-Key': apiKey,
-      'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
-    },
-    body: JSON.stringify({ source_code, language_id: langId, stdin: stdin || '' })
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
   });
 
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`Judge0 error ${response.status}: ${text}`);
-  }
+  if (!response.ok) throw new Error(`Wandbox error: ${response.status}`);
 
   const data = await response.json();
 
+  const compileError = (data.compiler_error || '').trim();
+  const stdout = data.program_output || '';
+  const stderr = data.program_error || '';
+  const exitCode = parseInt(data.status, 10);
+
+  const hasCompileError = compileError.length > 0;
+  const hasRuntimeError = !hasCompileError && exitCode !== 0;
+
   return {
-    status: data.status || { id: 11, description: 'Runtime Error' },
-    stdout: data.stdout || '',
-    stderr: data.stderr || '',
-    compile_output: data.compile_output || ''
+    status: {
+      id: hasCompileError ? 6 : hasRuntimeError ? 11 : 3,
+      description: hasCompileError ? 'Compilation Error'
+                 : hasRuntimeError ? 'Runtime Error'
+                 : 'Accepted'
+    },
+    stdout,
+    stderr,
+    compile_output: compileError
   };
 }
 
