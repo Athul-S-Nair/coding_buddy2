@@ -53,7 +53,7 @@ export default function Login() {
         {/* Brand Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-400 font-sans tracking-tight mb-2">
-            Coding Platform
+            Coding Buddy
           </h1>
           <p className="text-[#8b949e] text-sm">Please sign in to save your solving progress</p>
         </div>
