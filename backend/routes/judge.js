@@ -11,78 +11,72 @@ const router = express.Router();
 
 router.post('/run-code', async (req, res) => {
   try {
-    const { source_code, language_id, stdin = '', problemId } = req.body;
+    const { source_code, language_id, problemId, stdin } = req.body;
 
     if (!source_code) {
       return res.status(400).json({ error: 'source_code is required' });
     }
-
     if (!language_id) {
       return res.status(400).json({ error: 'language_id is required' });
     }
 
-    // If stdin is custom input
-    if (stdin && stdin.trim().length > 0) {
+    // Custom input mode
+    if (stdin !== undefined && stdin !== '') {
       const result = await executeCode({ source_code, language_id, stdin });
-      const formatted = formatExecutionResult(result);
       return res.json({
         custom: true,
-        stdout: formatted.stdout,
-        stderr: formatted.stderr,
-        compile_output: result.compile_output || '',
-        error: formatted.passed ? null : (formatted.status?.description || 'Wrong Answer'),
-        headerLabel: "Run Results (custom input)",
-        resultsPanelHeader: "Run Results (custom input)",
-        results_panel_header: "Run Results (custom input)",
-        header: "Run Results (custom input)"
+        stdout: result.stdout,
+        stderr: result.stderr,
+        compile_output: result.compile_output,
+        error: result.status?.id !== 3
+          ? result.status?.description : null
       });
     }
 
-    // Otherwise run against first 2 sample test cases of the problem
-    const targetProblemId = problemId || req.body.problem_id;
-    const problem = problems.find((item) => item.id === targetProblemId);
-    if (!problem || !problem.testCases || problem.testCases.length === 0) {
-      return res.status(404).json({ error: 'Problem or test cases not found' });
+    // Test case mode — run first 2 test cases
+    const problem = problems.find(
+      item => String(item.id) === String(problemId)
+    );
+    if (!problem) {
+      return res.status(404).json({ error: 'Problem not found' });
     }
 
-    const testCases = problem.testCases.slice(0, 2);
-    const submissions = testCases.map((testCase) => ({
-      source_code,
-      language_id,
-      stdin: testCase.input,
-    }));
+    const sampleCases = (problem.testCases || []).slice(0, 2);
+    if (sampleCases.length === 0) {
+      return res.status(400).json({ error: 'No test cases for this problem' });
+    }
 
-    const batchResults = await executeBatch(submissions);
+    const execResults = await Promise.all(
+      sampleCases.map(tc =>
+        executeCode({ source_code, language_id,
+                      stdin: tc.input || '' })
+      )
+    );
 
-    const results = batchResults.map((result, index) => {
-      const testCase = testCases[index];
-      const formatted = formatExecutionResult(result, testCase.expectedOutput);
-
+    const results = execResults.map((result, i) => {
+      const tc = sampleCases[i];
+      const evaluation = evaluateTestResult(result, tc);
       return {
-        testCase: index + 1,
-        input: testCase.input,
-        expected: testCase.expectedOutput,
-        actual: formatted.stdout,
-        passed: formatted.passed,
-        stderr: formatted.stderr,
-        compile_output: result.compile_output || '',
-        error: formatted.passed ? null : (formatted.status?.description || 'Wrong Answer'),
+        input: tc.input,
+        expected: tc.expectedOutput || tc.expected,
+        actual: result.stdout,
+        passed: evaluation.passed,
+        error: evaluation.error || null,
+        stderr: result.stderr,
+        compile_output: result.compile_output
       };
     });
 
-    res.json({
+    return res.json({
       custom: false,
-      results,
-      headerLabel: "Run Results (2 sample cases)",
-      resultsPanelHeader: "Run Results (2 sample cases)",
-      results_panel_header: "Run Results (2 sample cases)",
-      header: "Run Results (2 sample cases)"
+      results
     });
+
   } catch (error) {
     console.error('Run code error:', error);
     res.status(500).json({
       error: 'Internal server error',
-      message: error.message,
+      message: error.message
     });
   }
 });

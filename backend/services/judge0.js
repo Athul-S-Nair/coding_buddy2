@@ -9,8 +9,13 @@ const LANGUAGE_MAP = {
   75: { language: 'c', version: '10.2.0' }
 };
 
+function normalizeOutput(output) {
+  return (output || '').trim().split('\n')
+    .map(line => line.trimEnd()).join('\n').trim();
+}
+
 async function executeCode({ source_code, language_id, stdin = '' }) {
-  const runtime = LANGUAGE_MAP[language_id];
+  const runtime = LANGUAGE_MAP[parseInt(language_id, 10)];
   if (!runtime) throw new Error(`Unsupported language_id: ${language_id}`);
 
   const response = await fetch(PISTON_URL, {
@@ -24,11 +29,12 @@ async function executeCode({ source_code, language_id, stdin = '' }) {
     })
   });
 
+  if (!response.ok) throw new Error(`Piston error: ${response.status}`);
+
   const data = await response.json();
   const run = data.run || {};
   const compile = data.compile || {};
-
-  const hasCompileError = compile.code !== undefined && 
+  const hasCompileError = compile.code !== undefined &&
                           compile.code !== 0 && compile.stderr;
   const hasRuntimeError = run.code !== undefined && run.code !== 0;
 
@@ -46,35 +52,40 @@ async function executeCode({ source_code, language_id, stdin = '' }) {
 }
 
 async function executeBatch(submissions) {
-  const results = await Promise.all(
-    submissions.map(s => executeCode(s))
-  );
-  return results;
+  return Promise.all(submissions.map(s => executeCode(s)));
 }
 
-function normalizeOutput(output) {
-  if (!output) return '';
-  return output.toString().trim().replace(/\r\n/g, '\n');
-}
-
-function evaluateTestResult(stdout, expectedOutput) {
-  return normalizeOutput(stdout) === normalizeOutput(expectedOutput);
-}
-
-function formatExecutionResult(result, expectedOutput) {
-  const passed = evaluateTestResult(result.stdout, expectedOutput);
+function formatExecutionResult(result) {
   return {
-    passed,
-    stdout: result.stdout,
-    stderr: result.stderr || result.compile_output,
-    status: result.status
+    status: result.status,
+    stdout: result.stdout || '',
+    stderr: result.stderr || '',
+    compile_output: result.compile_output || ''
   };
 }
 
-module.exports = { 
-  executeCode, 
-  executeBatch, 
-  formatExecutionResult, 
-  evaluateTestResult, 
-  normalizeOutput 
+function evaluateTestResult(result, testCase) {
+  if (result.status?.id !== 3) {
+    return {
+      passed: false,
+      error: result.status?.description || 'Execution failed',
+      stderr: result.stderr || '',
+      compile_output: result.compile_output || '',
+      actualOutput: result.stdout || ''
+    };
+  }
+  const actualOutput = normalizeOutput(result.stdout);
+  const expectedOutput = normalizeOutput(
+    testCase.expectedOutput || testCase.expected || ''
+  );
+  return {
+    passed: actualOutput === expectedOutput,
+    actualOutput,
+    expectedOutput: testCase.expectedOutput || testCase.expected || ''
+  };
+}
+
+module.exports = {
+  executeCode, executeBatch,
+  formatExecutionResult, evaluateTestResult, normalizeOutput
 };
