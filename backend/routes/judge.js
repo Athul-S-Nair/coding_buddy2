@@ -91,7 +91,7 @@ router.post('/submit', async (req, res) => {
       });
     }
 
-    const problem = problems.find((item) => item.id === problem_id);
+    const problem = problems.find((item) => String(item.id) === String(problem_id));
     if (!problem) {
       return res.status(404).json({ error: 'Problem not found' });
     }

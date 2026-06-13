@@ -93,7 +93,7 @@ router.get('/:userId', (req, res) => {
   const cleanSolvesCount = userProgress.solves.filter((solve) => !solve.askedTutor).length;
 
   const solveHistory = userProgress.solves.map((solve) => {
-    const prob = problems.find((p) => p.id === solve.problemId);
+    const prob = problems.find((p) => String(p.id) === String(solve.problemId));
     return {
       problemId: solve.problemId,
       title: prob ? prob.title : 'Unknown Problem',
@@ -115,7 +115,7 @@ router.get('/:userId', (req, res) => {
   conceptsList.forEach(c => conceptMastery[c] = 0);
 
   userProgress.solves.forEach((solve) => {
-    const prob = problems.find((p) => p.id === solve.problemId);
+    const prob = problems.find((p) => String(p.id) === String(solve.problemId));
     if (prob && prob.concept) {
       conceptMastery[prob.concept] = (conceptMastery[prob.concept] || 0) + 1;
     }

@@ -28,7 +28,7 @@ router.post('/tutor', async (req, res) => {
       });
     }
 
-    const problem = problems.find((item) => item.id === problemId);
+    const problem = problems.find((item) => String(item.id) === String(problemId));
     if (!problem) {
       return res.status(404).json({ reply: 'Problem not found.' });
     }

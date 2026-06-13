@@ -53,9 +53,15 @@ function writeProgress(progressData) {
   fs.writeFileSync(PROGRESS_FILE, JSON.stringify(progressData, null, 2));
 }
 
+function writeProblems(newProblem) {
+  problems.push(newProblem);
+  fs.writeFileSync(PROBLEMS_FILE, JSON.stringify(problems, null, 2));
+}
+
 module.exports = {
   users,
   problems,
   readProgress,
   writeProgress,
+  writeProblems,
 };
