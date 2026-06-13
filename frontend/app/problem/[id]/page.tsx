@@ -6,6 +6,40 @@ import { useParams } from 'next/navigation'
 import Editor from '@monaco-editor/react'
 import { Settings } from 'lucide-react'
 import AlgorithmVisualizer from '../../components/AlgorithmVisualizer'
+import confetti from 'canvas-confetti'
+
+function TypewriterText({ text, speed = 12 }: { 
+  text: string, speed?: number 
+}) {
+  const [displayed, setDisplayed] = useState('')
+  const [done, setDone] = useState(false)
+  
+  useEffect(() => {
+    setDisplayed('')
+    setDone(false)
+    let i = 0
+    const timer = setInterval(() => {
+      if (i < text.length) {
+        setDisplayed(text.slice(0, i + 1))
+        i++
+      } else {
+        setDone(true)
+        clearInterval(timer)
+      }
+    }, speed)
+    return () => clearInterval(timer)
+  }, [text, speed])
+
+  return (
+    <span>
+      {displayed}
+      {!done && (
+        <span className="inline-block w-0.5 h-3.5 bg-emerald-400 
+        ml-0.5 animate-pulse align-middle" />
+      )}
+    </span>
+  )
+}
 
 interface Example {
   input: string
@@ -143,6 +177,33 @@ export default function ProblemPage() {
   const [visualizerCollapsed, setVisualizerCollapsed] = useState(false)
   const [tutorName, setTutorName] = useState('Sage')
   const [askedTutor, setAskedTutor] = useState(false)
+  const [showSolvedOverlay, setShowSolvedOverlay] = useState(false)
+
+  const triggerSolveAnimation = () => {
+    // First burst - center
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#8b5cf6', '#6366f1', '#10b981', '#f59e0b', '#ffffff']
+    })
+    // Second burst - left
+    setTimeout(() => confetti({
+      particleCount: 50,
+      angle: 60,
+      spread: 55,
+      origin: { x: 0 },
+      colors: ['#8b5cf6', '#10b981', '#ffffff']
+    }), 200)
+    // Third burst - right
+    setTimeout(() => confetti({
+      particleCount: 50,
+      angle: 120,
+      spread: 55,
+      origin: { x: 1 },
+      colors: ['#6366f1', '#f59e0b', '#ffffff']
+    }), 400)
+  }
 
   useEffect(() => {
     const savedName = localStorage.getItem('tutorName')
@@ -469,6 +530,9 @@ export default function ProblemPage() {
 
       // Save user progress if accepted
       if (isAccepted) {
+        triggerSolveAnimation()
+        setShowSolvedOverlay(true)
+        setTimeout(() => setShowSolvedOverlay(false), 2500)
         try {
           const userRes = await fetch(`${API_URL}/api/me`, { credentials: 'include' })
           if (userRes.ok) {
@@ -887,6 +951,7 @@ export default function ProblemPage() {
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {aiMessages.map((msg, idx) => {
                   const isUser = msg.role === 'user'
+                  const isLatest = idx === aiMessages.length - 1 && msg.role === 'ai'
                   return (
                     <div key={idx} className={`flex flex-col ${isUser ? 'items-end' : 'items-start'}`}>
                       {!isUser && (
@@ -910,7 +975,10 @@ export default function ProblemPage() {
                             ? 'bg-gray-700 text-gray-100 rounded-tr-sm'
                             : 'bg-gray-800 text-gray-100 rounded-tl-sm'
                         }`}>
-                          {msg.content}
+                          {isLatest 
+                            ? <TypewriterText text={msg.content} speed={10} />
+                            : msg.content
+                          }
                         </div>
                       </div>
                     </div>
@@ -1043,6 +1111,19 @@ export default function ProblemPage() {
           </div>
         )}
       </div>
+      {showSolvedOverlay && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none animate-fade-in">
+          <div className="flex flex-col items-center gap-4 bg-gray-900/80 backdrop-blur-md px-16 py-10 rounded-3xl border border-emerald-500/30 shadow-2xl shadow-emerald-500/20">
+            <div className="text-6xl animate-bounce">🎉</div>
+            <p className="text-2xl font-black text-white tracking-tight">
+              Problem Solved!
+            </p>
+            <p className="text-sm text-emerald-400 font-semibold">
+              All test cases passed
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

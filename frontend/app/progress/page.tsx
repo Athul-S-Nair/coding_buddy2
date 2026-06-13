@@ -5,6 +5,43 @@ import Link from 'next/link'
 import { Award, Flame, Zap, BarChart2, Calendar, Settings, ArrowLeft } from 'lucide-react'
 import { API_URL } from '../../lib/api'
 
+function useCountUp(target: number, duration = 1000) {
+  const [count, setCount] = useState(0)
+  useEffect(() => {
+    if (target === 0) {
+      setCount(0)
+      return
+    }
+    let start = 0
+    const increment = target / (duration / 16)
+    const timer = setInterval(() => {
+      start += increment
+      if (start >= target) {
+        setCount(target)
+        clearInterval(timer)
+      } else {
+        setCount(Math.floor(start))
+      }
+    }, 16)
+    return () => clearInterval(timer)
+  }, [target, duration])
+  return count
+}
+
+function AnimatedProgressStat({ value }: { value: number }) {
+  const count = useCountUp(value, 800)
+  return (
+    <div className="text-4xl font-extrabold text-white">{count}</div>
+  )
+}
+
+function AnimatedProgressStreak({ value }: { value: number }) {
+  const count = useCountUp(value, 800)
+  return (
+    <span>{count}</span>
+  )
+}
+
 interface ProgressData {
   solvedProblems: string[]
   totalSolved: number
@@ -269,9 +306,7 @@ export default function ProgressDashboard() {
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Card 1: Problems Solved */}
           <div className="bg-gray-800 rounded-xl p-6 shadow-lg">
-            <div className="text-4xl font-extrabold text-white">
-              {progress?.totalSolved || 0}
-            </div>
+            <AnimatedProgressStat value={progress?.totalSolved || 0} />
             <div className="text-gray-400 text-sm mt-2 font-medium">
               Problems Solved
             </div>
@@ -280,7 +315,7 @@ export default function ProgressDashboard() {
           {/* Card 2: Current Streak */}
           <div className="bg-gray-800 rounded-xl p-6 shadow-lg">
             <div className="text-4xl font-extrabold text-white flex items-center gap-2">
-              <span>{progress?.streak || 0}</span>
+              <AnimatedProgressStreak value={progress?.streak || 0} />
               <span className="text-3xl">🔥</span>
             </div>
             <div className="text-gray-400 text-sm mt-2 font-medium">
@@ -290,9 +325,7 @@ export default function ProgressDashboard() {
 
           {/* Card 3: Hint-free solves */}
           <div className="bg-gray-800 rounded-xl p-6 shadow-lg">
-            <div className="text-4xl font-extrabold text-white">
-              {progress?.cleanSolvesCount || 0}
-            </div>
+            <AnimatedProgressStat value={progress?.cleanSolvesCount || 0} />
             <div className="text-gray-400 text-sm mt-2 font-medium">
               Clean Solves
             </div>

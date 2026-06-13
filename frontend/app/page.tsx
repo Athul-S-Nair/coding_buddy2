@@ -5,6 +5,44 @@ import LinkComponent from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Settings } from 'lucide-react'
 import dynamic from 'next/dynamic'
+import ParticleBackground from './components/ParticleBackground'
+
+function useCountUp(target: number, duration = 1000) {
+  const [count, setCount] = useState(0)
+  useEffect(() => {
+    if (target === 0) {
+      setCount(0)
+      return
+    }
+    let start = 0
+    const increment = target / (duration / 16)
+    const timer = setInterval(() => {
+      start += increment
+      if (start >= target) {
+        setCount(target)
+        clearInterval(timer)
+      } else {
+        setCount(Math.floor(start))
+      }
+    }, 16)
+    return () => clearInterval(timer)
+  }, [target, duration])
+  return count
+}
+
+function AnimatedStat({ value }: { value: number }) {
+  const count = useCountUp(value, 800)
+  return (
+    <p className="text-2xl font-black text-white">{count}</p>
+  )
+}
+
+function AnimatedStreak({ value }: { value: number }) {
+  const count = useCountUp(value, 800)
+  return (
+    <span className="text-2xl font-black">{count}</span>
+  )
+}
 
 function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -49,6 +87,28 @@ export default function Home() {
   const [selectedDifficulty, setSelectedDifficulty] = useState<'All' | 'Easy' | 'Medium' | 'Hard'>('All')
   const [tutorName, setTutorName] = useState('Sage')
   const [tutorText, setTutorText] = useState("Wise choice! Let's solve some coding challenges today!")
+
+  const handleMouseMove = (
+    e: React.MouseEvent<HTMLAnchorElement>
+  ) => {
+    const card = e.currentTarget
+    const rect = card.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    const centerX = rect.width / 2
+    const centerY = rect.height / 2
+    const rotateX = ((y - centerY) / centerY) * -4
+    const rotateY = ((x - centerX) / centerX) * 4
+    card.style.transform = 
+      `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.01)`
+  }
+
+  const handleMouseLeave = (
+    e: React.MouseEvent<HTMLAnchorElement>
+  ) => {
+    e.currentTarget.style.transform = 
+      'perspective(1000px) rotateX(0) rotateY(0) scale(1)'
+  }
 
   useEffect(() => {
     const savedName = localStorage.getItem('tutorName')
@@ -147,8 +207,10 @@ export default function Home() {
   const solvedHard = progress ? problems.filter(p => p.difficulty === 'Hard' && progress.solvedProblems.includes(p.id)).length : 0
 
   return (
-    <main className="min-h-screen bg-[#080b11] text-[#f3f4f6] pb-12">
-      {/* Premium Header */}
+    <div className="min-h-screen bg-[#080b11] text-[#f3f4f6] pb-12 relative overflow-hidden">
+      <ParticleBackground />
+      <div className="relative z-10">
+        {/* Premium Header */}
       <nav className="glass-panel sticky top-0 z-40 px-6 py-4 flex justify-between items-center shadow-lg backdrop-blur-md">
         <LinkComponent href="/" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-violet-500 to-indigo-500 flex items-center justify-center font-bold text-white shadow-md shadow-violet-500/20">
@@ -300,6 +362,9 @@ export default function Home() {
                     key={problem.id}
                     href={`/problem/${problem.id}`}
                     className="block p-4 bg-white/5 border border-white/5 hover:border-white/15 rounded-xl hover:bg-white/[0.07] transition-all group"
+                    onMouseMove={handleMouseMove}
+                    onMouseLeave={handleMouseLeave}
+                    style={{ transition: 'transform 0.1s ease', willChange: 'transform' }}
                   >
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-3">
@@ -343,15 +408,15 @@ export default function Home() {
                 Track your streak and progress statistics
               </p>
 
-              {progress && (
+               {progress && (
                 <div className="w-full grid grid-cols-2 gap-4 py-4 border-t border-b border-white/5">
                   <div>
-                    <p className="text-2xl font-black text-white">{progress.totalSolved}</p>
+                    <AnimatedStat value={progress.totalSolved} />
                     <p className="text-[10px] font-semibold uppercase tracking-wider text-[#8b949e]">Solved</p>
                   </div>
                   <div className="flex flex-col items-center">
                     <div className="flex items-center gap-1.5 streak-flame">
-                      <span className="text-2xl font-black">{progress.streak}</span>
+                      <AnimatedStreak value={progress.streak} />
                       <span className="text-lg">🔥</span>
                     </div>
                     <p className="text-[10px] font-semibold uppercase tracking-wider text-[#8b949e]">Day Streak</p>
@@ -451,6 +516,7 @@ export default function Home() {
           )}
         </div>
       </div>
-    </main>
+      </div>
+    </div>
   )
 }
