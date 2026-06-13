@@ -140,6 +140,7 @@ export default function ProblemPage() {
   const [unlockedHintLevel, setUnlockedHintLevel] = useState(1)
   const [visualData, setVisualData] = useState<any | null>(null)
   const [isVisualizing, setIsVisualizing] = useState(false)
+  const [visualizerCollapsed, setVisualizerCollapsed] = useState(false)
   const [tutorName, setTutorName] = useState('Sage')
   const [askedTutor, setAskedTutor] = useState(false)
 
@@ -272,6 +273,7 @@ export default function ProblemPage() {
 
       const result = await response.json()
       setAiMessages(prev => [...prev, { role: 'ai', content: result.reply }])
+      setVisualizerCollapsed(true)
 
       // Detect concept and fetch visualization only if requestType is 'explain_concept'
       if (requestType === 'explain_concept') {
@@ -322,6 +324,7 @@ export default function ProblemPage() {
               const vizData = await vizResponse.json()
               if (vizData && !vizData.error) {
                 setVisualData(vizData)
+                setVisualizerCollapsed(false)
               } else {
                 setVisualData(null)
               }
@@ -941,13 +944,39 @@ export default function ProblemPage() {
 
             {/* Visualizer Panel or Loading State */}
             {(visualData || isVisualizing) && (
-              <div className="p-4 border-t border-white/5 bg-[#0b0f19] flex-shrink-0">
-                {isVisualizing ? (
-                  <div className="w-full h-[280px] bg-white/5 animate-pulse rounded-xl border border-white/5 flex items-center justify-center">
-                    <span className="text-xs text-slate-500 font-semibold">Generating visual trace...</span>
+              <div className="border-t border-white/5 bg-[#0b0f19] flex-shrink-0">
+                {/* Collapsible header */}
+                <button
+                  onClick={() => setVisualizerCollapsed(prev => !prev)}
+                  className="w-full flex items-center justify-between px-4 py-2 hover:bg-white/5 transition-colors group"
+                >
+                  <span className="text-xs font-semibold text-emerald-400 flex items-center gap-1.5">
+                    <span>⚡</span>
+                    Visual Trace
+                    {isVisualizing && (
+                      <span className="text-slate-500 font-normal">
+                        — generating...
+                      </span>
+                    )}
+                  </span>
+                  <span className="text-slate-500 text-xs group-hover:text-slate-300 transition-colors">
+                    {visualizerCollapsed ? '▲ show' : '▼ hide'}
+                  </span>
+                </button>
+
+                {/* Collapsible body */}
+                {!visualizerCollapsed && (
+                  <div className="px-4 pb-4">
+                    {isVisualizing ? (
+                      <div className="w-full h-[200px] bg-white/5 animate-pulse rounded-xl border border-white/5 flex items-center justify-center">
+                        <span className="text-xs text-slate-500 font-semibold">
+                          Generating visual trace...
+                        </span>
+                      </div>
+                    ) : (
+                      visualData && <AlgorithmVisualizer data={visualData} />
+                    )}
                   </div>
-                ) : (
-                  visualData && <AlgorithmVisualizer data={visualData} />
                 )}
               </div>
             )}
@@ -958,6 +987,7 @@ export default function ProblemPage() {
                 <button
                   onClick={() => handleTutorRequest('why_failing')}
                   disabled={aiLoading || runResults.length === 0}
+                  title={runResults.length === 0 ? "Run your code first to unlock the tutor" : ""}
                   className="px-2 py-1 bg-[#1c2433] hover:bg-[#283247] border border-white/5 text-[10px] text-[#c9d1d9] font-bold rounded-md disabled:opacity-50 disabled:pointer-events-none transition-all"
                 >
                   🔍 Why failing?
@@ -965,6 +995,7 @@ export default function ProblemPage() {
                 <button
                   onClick={() => handleTutorRequest('explain_concept')}
                   disabled={aiLoading || runResults.length === 0}
+                  title={runResults.length === 0 ? "Run your code first to unlock the tutor" : ""}
                   className="px-2 py-1 bg-[#1c2433] hover:bg-[#283247] border border-white/5 text-[10px] text-[#c9d1d9] font-bold rounded-md disabled:opacity-50 disabled:pointer-events-none transition-all"
                 >
                   💡 Explain concept
@@ -975,6 +1006,7 @@ export default function ProblemPage() {
                     if (unlockedHintLevel < 3) setUnlockedHintLevel(prev => prev + 1)
                   }}
                   disabled={aiLoading || runResults.length === 0}
+                  title={runResults.length === 0 ? "Run your code first to unlock the tutor" : ""}
                   className="px-2 py-1 bg-[#1c2433] hover:bg-[#283247] border border-white/5 text-[10px] text-[#c9d1d9] font-bold rounded-md disabled:opacity-50 disabled:pointer-events-none transition-all"
                 >
                   🎯 {unlockedHintLevel === 1 ? 'Nudge hint' : unlockedHintLevel === 2 ? 'Stuck hint' : 'Final hint'}
