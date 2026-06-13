@@ -21,7 +21,7 @@ router.post('/run-code', async (req, res) => {
       return res.status(400).json({ error: 'language_id is required' });
     }
 
-    const result = await executeCode(source_code, language_id, stdin);
+    const result = await executeCode({ source_code, language_id, stdin });
     res.json(formatExecutionResult(result));
   } catch (error) {
     console.error('Run code error:', error);
@@ -29,17 +29,6 @@ router.post('/run-code', async (req, res) => {
       error: 'Internal server error',
       message: error.message,
     });
-  }
-});
-
-router.get('/submissions/:token', async (req, res) => {
-  try {
-    const { pollSubmission, formatExecutionResult } = require('../services/judge0');
-    const result = await pollSubmission(req.params.token);
-    res.json(formatExecutionResult(result));
-  } catch (error) {
-    console.error('Get submission error:', error);
-    res.status(500).json({ error: error.message });
   }
 });
 
@@ -72,13 +61,17 @@ router.post('/submit', async (req, res) => {
 
     const results = batchResults.map((result, index) => {
       const testCase = problem.testCases[index];
-      const evaluation = evaluateTestResult(result, testCase);
+      const formatted = formatExecutionResult(result, testCase.expectedOutput);
 
       return {
         testCase: index + 1,
         input: testCase.input,
         expectedOutput: testCase.expectedOutput,
-        ...evaluation,
+        actualOutput: formatted.stdout,
+        passed: formatted.passed,
+        stderr: formatted.stderr,
+        compile_output: result.compile_output || '',
+        error: formatted.passed ? null : (formatted.status?.description || 'Wrong Answer'),
       };
     });
 
@@ -101,3 +94,4 @@ router.post('/submit', async (req, res) => {
 });
 
 module.exports = router;
+

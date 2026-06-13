@@ -1,226 +1,92 @@
-const JUDGE0_API_URL = process.env.JUDGE0_API_URL || 'https://ce.judge0.com';
+const PISTON_URL = process.env.PISTON_URL || 'https://emkc.org/api/v2/piston/execute';
 
-const JUDGE0_HEADERS = {
-  'Content-Type': 'application/json',
-  Accept: 'application/json',
+const LANGUAGE_MAP = {
+  71: { language: 'python', version: '3.10.0' },
+  50: { language: 'c', version: '10.2.0' },
+  54: { language: 'c++', version: '10.2.0' },
+  62: { language: 'java', version: '15.0.2' },
+  63: { language: 'javascript', version: '18.15.0' },
+  75: { language: 'c', version: '10.2.0' }
 };
 
-const RESULT_FIELDS =
-  'stdout,stderr,compile_output,status,time,memory,message,token';
-
-const IN_PROGRESS_STATUSES = new Set([1, 2]);
-
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-function normalizeOutput(output) {
-  return (output || '')
-    .trim()
-    .split('\n')
-    .map((line) => line.trimEnd())
-    .join('\n')
-    .trim();
-}
-
-async function pollSubmission(token) {
-  let delay = 250;
-  const maxAttempts = 40;
-
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    if (attempt > 0) {
-      await sleep(delay);
-      delay = Math.min(Math.round(delay * 1.5), 1000);
-    }
-
-    const response = await fetch(
-      `${JUDGE0_API_URL}/submissions/${token}?base64_encoded=false&fields=${RESULT_FIELDS}`,
-      { headers: { Accept: 'application/json' } }
-    );
-
-    if (!response.ok) {
-      continue;
-    }
-
-    const result = await response.json();
-    if (!IN_PROGRESS_STATUSES.has(result.status?.id)) {
-      return result;
-    }
+async function executeCode(arg, language_id, stdin = '') {
+  let source_code;
+  if (typeof arg === 'object' && arg !== null && !Array.isArray(arg)) {
+    source_code = arg.source_code;
+    language_id = arg.language_id;
+    stdin = arg.stdin || '';
+  } else {
+    source_code = arg;
   }
 
-  throw new Error('Timeout waiting for execution result');
-}
+  const runtime = LANGUAGE_MAP[language_id];
+  if (!runtime) throw new Error(`Unsupported language_id: ${language_id}`);
 
-async function executeCode(source_code, language_id, stdin = '') {
-  const submission = {
-    source_code,
-    language_id: parseInt(language_id, 10),
-    stdin,
+  const headers = { 'Content-Type': 'application/json' };
+  if (process.env.PISTON_API_KEY) {
+    headers['Authorization'] = process.env.PISTON_API_KEY.startsWith('Bearer ')
+      ? process.env.PISTON_API_KEY
+      : `Bearer ${process.env.PISTON_API_KEY}`;
+  }
+
+  const response = await fetch(PISTON_URL, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      language: runtime.language,
+      version: runtime.version,
+      files: [{ content: source_code }],
+      stdin
+    })
+  });
+
+  const data = await response.json();
+  const run = data.run || {};
+  const compile = data.compile || {};
+
+  const hasCompileError = compile.code !== 0 && compile.stderr;
+  const hasRuntimeError = run.code !== 0;
+
+  return {
+    status: {
+      id: hasCompileError ? 6 : hasRuntimeError ? 11 : 3,
+      description: hasCompileError ? 'Compilation Error' 
+                 : hasRuntimeError ? 'Runtime Error' 
+                 : 'Accepted'
+    },
+    stdout: run.stdout || '',
+    stderr: run.stderr || '',
+    compile_output: compile.stderr || ''
   };
-
-  const syncUrl = `${JUDGE0_API_URL}/submissions?base64_encoded=false&wait=true&fields=${RESULT_FIELDS}`;
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 15000);
-
-  try {
-    const syncResponse = await fetch(syncUrl, {
-      method: 'POST',
-      headers: JUDGE0_HEADERS,
-      body: JSON.stringify(submission),
-      signal: controller.signal,
-    });
-
-    if (syncResponse.ok) {
-      return syncResponse.json();
-    }
-  } catch (error) {
-    if (error.name !== 'AbortError') {
-      throw error;
-    }
-  } finally {
-    clearTimeout(timeoutId);
-  }
-
-  const submitResponse = await fetch(
-    `${JUDGE0_API_URL}/submissions?base64_encoded=false&wait=false`,
-    {
-      method: 'POST',
-      headers: JUDGE0_HEADERS,
-      body: JSON.stringify(submission),
-    }
-  );
-
-  if (!submitResponse.ok) {
-    const error = await submitResponse.text();
-    throw new Error(`Failed to submit code: ${error}`);
-  }
-
-  const { token } = await submitResponse.json();
-  return pollSubmission(token);
-}
-
-async function pollBatch(tokens) {
-  let delay = 250;
-  const maxAttempts = 40;
-
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    if (attempt > 0) {
-      await sleep(delay);
-      delay = Math.min(Math.round(delay * 1.5), 1000);
-    }
-
-    const response = await fetch(
-      `${JUDGE0_API_URL}/submissions/batch?tokens=${tokens.join(',')}&base64_encoded=false&fields=${RESULT_FIELDS}`,
-      { headers: { Accept: 'application/json' } }
-    );
-
-    if (!response.ok) {
-      continue;
-    }
-
-    const results = await response.json();
-    const submissions = Array.isArray(results) ? results : results.submissions || [];
-
-    if (
-      submissions.length === tokens.length &&
-      submissions.every((result) => !IN_PROGRESS_STATUSES.has(result.status?.id))
-    ) {
-      return submissions;
-    }
-  }
-
-  throw new Error('Timeout waiting for batch execution results');
 }
 
 async function executeBatch(submissions) {
-  if (submissions.length === 0) {
-    return [];
-  }
-
-  if (submissions.length === 1) {
-    const single = submissions[0];
-    const result = await executeCode(
-      single.source_code,
-      single.language_id,
-      single.stdin || ''
-    );
-    return [result];
-  }
-
-  const batchResponse = await fetch(
-    `${JUDGE0_API_URL}/submissions/batch?base64_encoded=false`,
-    {
-      method: 'POST',
-      headers: JUDGE0_HEADERS,
-      body: JSON.stringify({
-        submissions: submissions.map((item) => ({
-          source_code: item.source_code,
-          language_id: parseInt(item.language_id, 10),
-          stdin: item.stdin || '',
-        })),
-      }),
-    }
+  const results = await Promise.all(
+    submissions.map(s => executeCode(s))
   );
-
-  if (!batchResponse.ok) {
-    const error = await batchResponse.text();
-    throw new Error(`Failed to submit batch: ${error}`);
-  }
-
-  const created = await batchResponse.json();
-  const tokens = created.map((entry) => entry.token).filter(Boolean);
-
-  if (tokens.length !== submissions.length) {
-    throw new Error('Judge0 batch submission returned incomplete tokens');
-  }
-
-  return pollBatch(tokens);
+  return results;
 }
 
-function formatExecutionResult(result) {
-  return {
-    status: {
-      id: result.status?.id,
-      description: result.status?.description,
-    },
-    stdout: result.stdout || '',
-    stderr: result.stderr || '',
-    compile_output: result.compile_output || '',
-    message: result.message || '',
-    time: result.time,
-    memory: result.memory,
-    token: result.token,
-  };
+function normalizeOutput(output) {
+  if (!output) return '';
+  return output.toString().trim().replace(/\r\n/g, '\n');
 }
 
-function evaluateTestResult(result, testCase) {
-  if (result.status?.id !== 3) {
-    return {
-      passed: false,
-      error: result.status?.description || 'Execution failed',
-      stderr: result.stderr || '',
-      compile_output: result.compile_output || '',
-      actualOutput: result.stdout || '',
-    };
-  }
+function evaluateTestResult(stdout, expectedOutput) {
+  return normalizeOutput(stdout) === normalizeOutput(expectedOutput);
+}
 
-  const actualOutput = normalizeOutput(result.stdout);
-  const expectedOutput = normalizeOutput(testCase.expectedOutput);
-  const passed = actualOutput === expectedOutput;
-
+function formatExecutionResult(result, expectedOutput) {
+  const passed = evaluateTestResult(result.stdout, expectedOutput);
   return {
     passed,
-    actualOutput,
-    expectedOutput: testCase.expectedOutput,
-    time: result.time,
-    memory: result.memory,
+    stdout: result.stdout,
+    stderr: result.stderr || result.compile_output,
+    status: result.status
   };
 }
 
-module.exports = {
-  JUDGE0_API_URL,
-  executeCode,
-  executeBatch,
-  formatExecutionResult,
-  evaluateTestResult,
-  normalizeOutput,
-  pollSubmission,
+module.exports = { 
+  executeCode, executeBatch, 
+  formatExecutionResult, evaluateTestResult, normalizeOutput 
 };

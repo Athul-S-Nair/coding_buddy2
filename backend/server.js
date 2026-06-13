@@ -2,8 +2,6 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
-const { JUDGE0_API_URL } = require('./services/judge0');
-
 const problemsRouter = require('./routes/problems');
 const authRouter = require('./routes/auth');
 const progressRouter = require('./routes/progress');
@@ -77,5 +75,4 @@ app.use('/', judgeRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
-  console.log(`Judge0 API URL: ${JUDGE0_API_URL}`);
 });
