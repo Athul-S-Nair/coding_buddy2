@@ -110,17 +110,17 @@ router.post('/submit', async (req, res) => {
 
     const results = batchResults.map((result, index) => {
       const testCase = problem.testCases[index];
-      const formatted = formatExecutionResult(result, testCase.expectedOutput);
+      const evaluation = evaluateTestResult(result, testCase);
 
       return {
         testCase: index + 1,
         input: testCase.input,
         expectedOutput: testCase.expectedOutput,
-        actualOutput: formatted.stdout,
-        passed: formatted.passed,
-        stderr: formatted.stderr,
+        actualOutput: result.stdout,
+        passed: evaluation.passed,
+        stderr: result.stderr,
         compile_output: result.compile_output || '',
-        error: formatted.passed ? null : (formatted.status?.description || 'Wrong Answer'),
+        error: evaluation.error || null,
       };
     });
 
