@@ -1,70 +1,144 @@
-const JUDGE0_URL = process.env.JUDGE0_API_URL || 'https://ce.judge0.com';
+const { execFile, spawn } = require('child_process');
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
 
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const TIMEOUT_MS = 10000;
+
+// language_id -> { ext, compile, run }
+const LANGUAGES = {
+  71: { ext: '.py',   compile: null,                         run: ['python3'] },
+  63: { ext: '.js',   compile: null,                         run: ['node'] },
+  50: { ext: '.c',    compile: (f, out) => ['gcc', [f, '-o', out]], run: null },
+  75: { ext: '.c',    compile: (f, out) => ['gcc', [f, '-o', out]], run: null },
+  54: { ext: '.cpp',  compile: (f, out) => ['g++', [f, '-o', out]], run: null },
+  62: { ext: '.java', compile: (f, dir) => ['javac', ['-d', dir, f]], run: null },
+};
+
+function makeTempDir() {
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'exec-'));
+}
+
+function cleanup(dir) {
+  try { fs.rmSync(dir, { recursive: true, force: true }); } catch (_) {}
+}
+
+function runProcess(cmd, args, { stdin = '', cwd } = {}) {
+  return new Promise((resolve) => {
+    const proc = spawn(cmd, args, { cwd, stdio: ['pipe', 'pipe', 'pipe'] });
+    let stdout = '';
+    let stderr = '';
+
+    proc.stdout.on('data', d => { stdout += d; });
+    proc.stderr.on('data', d => { stderr += d; });
+
+    const timer = setTimeout(() => {
+      proc.kill('SIGKILL');
+      resolve({ timedOut: true, stdout, stderr, code: null });
+    }, TIMEOUT_MS);
+
+    proc.on('close', (code) => {
+      clearTimeout(timer);
+      resolve({ timedOut: false, stdout, stderr, code });
+    });
+
+    if (stdin) proc.stdin.write(stdin);
+    proc.stdin.end();
+  });
+}
+
+function compileProcess(cmd, args, cwd) {
+  return new Promise((resolve) => {
+    execFile(cmd, args, { cwd, timeout: TIMEOUT_MS }, (err, stdout, stderr) => {
+      resolve({ err, stdout: stdout || '', stderr: stderr || '' });
+    });
+  });
+}
+
+async function executeCode({ source_code, language_id, stdin = '' }) {
+  const lang = LANGUAGES[parseInt(language_id, 10)];
+  if (!lang) {
+    return {
+      status: { id: 6, description: 'Compile Error' },
+      stdout: '',
+      stderr: `Unsupported language_id: ${language_id}`,
+      compile_output: '',
+    };
+  }
+
+  const dir = makeTempDir();
+  try {
+    let srcFile;
+    let className = null;
+
+    if (parseInt(language_id, 10) === 62) {
+      // Java: filename must match public class name
+      const match = source_code.match(/public\s+class\s+(\w+)/);
+      className = match ? match[1] : 'Main';
+      srcFile = path.join(dir, `${className}.java`);
+    } else {
+      srcFile = path.join(dir, `code${lang.ext}`);
+    }
+
+    fs.writeFileSync(srcFile, source_code);
+
+    // Compile step
+    if (lang.compile) {
+      const outBin = path.join(dir, 'output');
+      const [cmd, args] = lang.compile(srcFile, parseInt(language_id, 10) === 62 ? dir : outBin);
+      const { err, stderr } = await compileProcess(cmd, args, dir);
+      if (err) {
+        return {
+          status: { id: 6, description: 'Compile Error' },
+          stdout: '',
+          stderr: '',
+          compile_output: stderr || err.message,
+        };
+      }
+
+      // Run compiled binary
+      let runCmd, runArgs;
+      if (parseInt(language_id, 10) === 62) {
+        runCmd = 'java';
+        runArgs = ['-cp', dir, className];
+      } else {
+        runCmd = outBin;
+        runArgs = [];
+      }
+
+      const res = await runProcess(runCmd, runArgs, { stdin, cwd: dir });
+      if (res.timedOut) {
+        return { status: { id: 5, description: 'Time Limit Exceeded' }, stdout: res.stdout, stderr: res.stderr, compile_output: '' };
+      }
+      if (res.code !== 0) {
+        return { status: { id: 11, description: 'Runtime Error' }, stdout: res.stdout, stderr: res.stderr, compile_output: '' };
+      }
+      return { status: { id: 3, description: 'Accepted' }, stdout: res.stdout, stderr: res.stderr, compile_output: '' };
+    }
+
+    // Interpreted
+    const [interp, ...interpArgs] = lang.run;
+    const res = await runProcess(interp, [...interpArgs, srcFile], { stdin, cwd: dir });
+    if (res.timedOut) {
+      return { status: { id: 5, description: 'Time Limit Exceeded' }, stdout: res.stdout, stderr: res.stderr, compile_output: '' };
+    }
+    if (res.code !== 0) {
+      return { status: { id: 11, description: 'Runtime Error' }, stdout: res.stdout, stderr: res.stderr, compile_output: '' };
+    }
+    return { status: { id: 3, description: 'Accepted' }, stdout: res.stdout, stderr: res.stderr, compile_output: '' };
+
+  } finally {
+    cleanup(dir);
+  }
+}
+
+async function executeBatch(submissions) {
+  return Promise.all(submissions.map(s => executeCode(s)));
+}
 
 function normalizeOutput(output) {
   if (!output) return '';
   return output.toString().trim().replace(/\r\n/g, '\n').trim();
-}
-
-function encodeBase64(str) {
-  return Buffer.from(str || '').toString('base64');
-}
-
-function decodeBase64(str) {
-  if (!str) return '';
-  return Buffer.from(str, 'base64').toString('utf-8');
-}
-
-async function executeCode({ source_code, language_id, stdin = '' }) {
-  const url = `${JUDGE0_URL}/submissions?base64_encoded=true&wait=true`;
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      source_code: encodeBase64(source_code),
-      language_id: parseInt(language_id, 10),
-      stdin: encodeBase64(stdin)
-    })
-  });
-
-  if (!response.ok) {
-    throw new Error(`Judge0 API error: ${response.status}`);
-  }
-
-  const data = await response.json();
-
-  return {
-    status: data.status || { id: 13, description: 'Internal Error' },
-    stdout: decodeBase64(data.stdout),
-    stderr: decodeBase64(data.stderr),
-    compile_output: decodeBase64(data.compile_output),
-    time: data.time !== undefined ? data.time : null,
-    memory: data.memory !== undefined ? data.memory : null
-  };
-}
-
-async function executeBatch(submissions) {
-  const results = [];
-  for (let i = 0; i < submissions.length; i++) {
-    if (i > 0) {
-      await sleep(600);
-    }
-    try {
-      const res = await executeCode(submissions[i]);
-      results.push(res);
-    } catch (err) {
-      results.push({
-        status: { id: 13, description: 'Internal Error' },
-        stdout: '',
-        stderr: err.message,
-        compile_output: '',
-        time: null,
-        memory: null
-      });
-    }
-  }
-  return results;
 }
 
 function evaluateTestResult(result, testCase) {
