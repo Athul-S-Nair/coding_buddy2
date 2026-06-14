@@ -1,15 +1,13 @@
-const axios = require('axios');
+const PISTON_URL = 'https://emkc.org/api/v2/piston/execute';
 
-const JUDGE0_URL = process.env.JUDGE0_API_URL || 'http://localhost:2358';
-const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY || '';
-
-function getHeaders() {
-  const headers = { 'Content-Type': 'application/json' };
-  if (JUDGE0_API_KEY) {
-    headers['X-Auth-Token'] = JUDGE0_API_KEY;
-  }
-  return headers;
-}
+const LANGUAGE_MAP = {
+  71: { language: 'python', version: '3.10.0' },
+  50: { language: 'c', version: '10.2.0' },
+  54: { language: 'c++', version: '10.2.0' },
+  62: { language: 'java', version: '15.0.2' },
+  63: { language: 'javascript', version: '18.15.0' },
+  75: { language: 'c', version: '10.2.0' }
+};
 
 function normalizeOutput(output) {
   if (!output) return '';
@@ -17,116 +15,65 @@ function normalizeOutput(output) {
 }
 
 async function executeCode({ source_code, language_id, stdin = '' }) {
-  // Step 1: Submit to Judge0 and get a token
-  const submitResponse = await axios.post(
-    `${JUDGE0_URL}/submissions?base64_encoded=false&wait=false`,
-    {
-      source_code,
-      language_id: parseInt(language_id, 10),
-      stdin: stdin || '',
+  const runtime = LANGUAGE_MAP[parseInt(language_id, 10)];
+  if (!runtime) throw new Error(`Unsupported language_id: ${language_id}`);
+
+  const response = await fetch(PISTON_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      language: runtime.language,
+      version: runtime.version,
+      files: [{ content: source_code }],
+      stdin: stdin || ''
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`Piston API error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  const run = data.run || {};
+  const compile = data.compile || {};
+
+  const hasCompileError = compile.code !== undefined && 
+                          compile.code !== 0 && 
+                          compile.stderr;
+  const hasRuntimeError = run.code !== undefined && run.code !== 0;
+
+  return {
+    status: {
+      id: hasCompileError ? 6 : hasRuntimeError ? 11 : 3,
+      description: hasCompileError ? 'Compilation Error'
+                 : hasRuntimeError ? 'Runtime Error'
+                 : 'Accepted'
     },
-    { headers: getHeaders() }
-  );
-
-  const token = submitResponse.data.token;
-  if (!token) {
-    throw new Error('No token returned from Judge0');
-  }
-
-  // Step 2: Poll until done (status id 1=queued, 2=processing)
-  let attempts = 0;
-  const maxAttempts = 20;
-  
-  while (attempts < maxAttempts) {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    const resultResponse = await axios.get(
-      `${JUDGE0_URL}/submissions/${token}?base64_encoded=false`,
-      { headers: getHeaders() }
-    );
-
-    const data = resultResponse.data;
-    
-    // Status 1 = In Queue, 2 = Processing — keep waiting
-    if (data.status?.id === 1 || data.status?.id === 2) {
-      attempts++;
-      continue;
-    }
-
-    // Any other status means done
-    return {
-      status: {
-        id: data.status?.id,
-        description: data.status?.description
-      },
-      stdout: data.stdout || '',
-      stderr: data.stderr || '',
-      compile_output: data.compile_output || '',
-      time: data.time,
-      memory: data.memory
-    };
-  }
-
-  throw new Error('Judge0 execution timed out after 10 seconds');
+    stdout: run.stdout || '',
+    stderr: run.stderr || '',
+    compile_output: compile.stderr || '',
+    time: null,
+    memory: null
+  };
 }
 
 async function executeBatch(submissions) {
-  // Step 1: Submit all at once using Judge0 batch endpoint
-  const batchPayload = {
-    submissions: submissions.map(s => ({
-      source_code: s.source_code,
-      language_id: parseInt(s.language_id, 10),
-      stdin: s.stdin || ''
-    }))
-  };
-
-  const submitResponse = await axios.post(
-    `${JUDGE0_URL}/submissions/batch?base64_encoded=false`,
-    batchPayload,
-    { headers: getHeaders() }
+  const results = await Promise.all(
+    submissions.map(s => executeCode(s).catch(err => ({
+      status: { id: 13, description: 'Internal Error' },
+      stdout: '',
+      stderr: err.message,
+      compile_output: '',
+      time: null,
+      memory: null
+    })))
   );
-
-  const tokens = submitResponse.data.map(t => t.token);
-
-  // Step 2: Poll until ALL are done
-  let attempts = 0;
-  const maxAttempts = 20;
-
-  while (attempts < maxAttempts) {
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    const tokenString = tokens.join(',');
-    const resultsResponse = await axios.get(
-      `${JUDGE0_URL}/submissions/batch?tokens=${tokenString}&base64_encoded=false`,
-      { headers: getHeaders() }
-    );
-
-    const results = resultsResponse.data.submissions;
-    const allDone = results.every(r => r.status?.id !== 1 && r.status?.id !== 2);
-
-    if (allDone) {
-      return results.map(data => ({
-        status: {
-          id: data.status?.id,
-          description: data.status?.description
-        },
-        stdout: data.stdout || '',
-        stderr: data.stderr || '',
-        compile_output: data.compile_output || '',
-        time: data.time,
-        memory: data.memory
-      }));
-    }
-
-    attempts++;
-  }
-
-  throw new Error('Judge0 batch execution timed out');
+  return results;
 }
 
 function evaluateTestResult(result, testCase) {
   const expectedOutput = testCase.expectedOutput || testCase.expected || '';
-  
+
   if (result.status?.id !== 3) {
     return {
       passed: false,
@@ -143,7 +90,7 @@ function evaluateTestResult(result, testCase) {
   return {
     passed: actualOutput === expected,
     actualOutput,
-    expectedOutput: expectedOutput,
+    expectedOutput,
     error: null
   };
 }
