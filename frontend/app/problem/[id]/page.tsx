@@ -277,10 +277,10 @@ export default function ProblemPage() {
         body: JSON.stringify({
           code,
           language,
-          problemTitle: problem.title,
-          problemDescription: problem.description,
+          problemTitle: problem?.title,
+          problemDescription: problem?.description,
           language_id: languageIds[language],
-          problemId: problem.id
+          problemId: problem?.id
         })
       })
 
