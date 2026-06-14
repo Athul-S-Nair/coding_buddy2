@@ -5,7 +5,10 @@ import LinkComponent from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Settings } from 'lucide-react'
 import dynamic from 'next/dynamic'
-import ParticleBackground from './components/ParticleBackground'
+import AuroraBackground from './components/AuroraBackground'
+import ScrambleText from './components/ScrambleText'
+import HoloCard from './components/HoloCard'
+import MagneticButton from './components/MagneticButton'
 
 function useCountUp(target: number, duration = 1000) {
   const [count, setCount] = useState(0)
@@ -87,28 +90,6 @@ export default function Home() {
   const [selectedDifficulty, setSelectedDifficulty] = useState<'All' | 'Easy' | 'Medium' | 'Hard'>('All')
   const [tutorName, setTutorName] = useState('Sage')
   const [tutorText, setTutorText] = useState("Wise choice! Let's solve some coding challenges today!")
-
-  const handleMouseMove = (
-    e: React.MouseEvent<HTMLAnchorElement>
-  ) => {
-    const card = e.currentTarget
-    const rect = card.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-    const centerX = rect.width / 2
-    const centerY = rect.height / 2
-    const rotateX = ((y - centerY) / centerY) * -4
-    const rotateY = ((x - centerX) / centerX) * 4
-    card.style.transform = 
-      `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.01)`
-  }
-
-  const handleMouseLeave = (
-    e: React.MouseEvent<HTMLAnchorElement>
-  ) => {
-    e.currentTarget.style.transform = 
-      'perspective(1000px) rotateX(0) rotateY(0) scale(1)'
-  }
 
   useEffect(() => {
     const savedName = localStorage.getItem('tutorName')
@@ -217,7 +198,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#080b11] text-[#f3f4f6] pb-12 relative overflow-hidden">
-      <ParticleBackground />
+      <AuroraBackground />
       <div className="relative z-10">
         {/* Premium Header */}
       <nav className="glass-panel sticky top-0 z-40 px-6 py-4 flex justify-between items-center shadow-lg backdrop-blur-md">
@@ -225,9 +206,11 @@ export default function Home() {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-violet-500 to-indigo-500 flex items-center justify-center font-bold text-white shadow-md shadow-violet-500/20">
             C
           </div>
-          <span className="text-xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-400">
-            Coding Buddy
-          </span>
+          <ScrambleText
+            text="Coding Buddy"
+            className="text-xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-400"
+            initialDelay={400}
+          />
         </LinkComponent>
 
         <div className="flex items-center gap-4">
@@ -364,37 +347,45 @@ export default function Home() {
             </div>
           ) : (
             <div className="space-y-3 animate-fade-in-up">
-              {filteredProblems.map((problem) => {
+              {filteredProblems.map((problem, idx) => {
                 const isSolved = progress?.solvedProblems.includes(problem.id)
                 return (
-                  <LinkComponent
+                  <HoloCard
                     key={problem.id}
-                    href={`/problem/${problem.id}`}
-                    className="block p-4 bg-white/5 border border-white/5 hover:border-white/15 rounded-xl hover:bg-white/[0.07] transition-all group"
-                    onMouseMove={handleMouseMove}
-                    onMouseLeave={handleMouseLeave}
-                    style={{ transition: 'transform 0.1s ease', willChange: 'transform' }}
+                    rarity={
+                      problem.difficulty === 'Easy'
+                        ? 'common'
+                        : problem.difficulty === 'Medium'
+                        ? 'uncommon'
+                        : 'rare'
+                    }
+                    className={`glass-card animate-stagger-${(idx % 5) + 1}`}
                   >
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-3">
-                        {isSolved ? (
-                          <span className="flex items-center justify-center bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-full w-5 h-5 text-[10px] font-bold">
-                            ✓
+                    <LinkComponent
+                      href={`/problem/${problem.id}`}
+                      className="block p-4 bg-white/5 border border-white/5 hover:border-white/15 rounded-xl hover:bg-white/[0.07] transition-all group"
+                    >
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                          {isSolved ? (
+                            <span className="flex items-center justify-center bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-full w-5 h-5 text-[10px] font-bold">
+                              ✓
+                            </span>
+                          ) : (
+                            <span className="flex items-center justify-center bg-white/5 text-white/20 border border-white/5 rounded-full w-5 h-5 text-[10px]">
+                              •
+                            </span>
+                          )}
+                          <span className="text-white font-medium group-hover:text-violet-400 transition-colors">
+                            {problem.id}. {problem.title}
                           </span>
-                        ) : (
-                          <span className="flex items-center justify-center bg-white/5 text-white/20 border border-white/5 rounded-full w-5 h-5 text-[10px]">
-                            •
-                          </span>
-                        )}
-                        <span className="text-white font-medium group-hover:text-violet-400 transition-colors">
-                          {problem.id}. {problem.title}
+                        </div>
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${getDifficultyColor(problem.difficulty)} ${getDifficultyBg(problem.difficulty)}`}>
+                          {problem.difficulty}
                         </span>
                       </div>
-                      <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${getDifficultyColor(problem.difficulty)} ${getDifficultyBg(problem.difficulty)}`}>
-                        {problem.difficulty}
-                      </span>
-                    </div>
-                  </LinkComponent>
+                    </LinkComponent>
+                  </HoloCard>
                 )
               })}
             </div>
@@ -463,12 +454,12 @@ export default function Home() {
 
             {!user && (
               <div className="w-full mt-6 flex flex-col gap-2 relative z-10">
-                <LinkComponent
-                  href="/login"
+                <MagneticButton
+                  onClick={() => router.push('/login')}
                   className="w-full py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-sm font-semibold rounded-lg transition-all text-center shadow-lg shadow-violet-500/20"
                 >
                   Log In / Register
-                </LinkComponent>
+                </MagneticButton>
               </div>
             )}
           </div>

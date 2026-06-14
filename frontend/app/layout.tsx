@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import CursorTrail from './components/CursorTrail'
 
 export const metadata: Metadata = {
   title: "Coding Buddy — Learn to code with an AI tutor",
@@ -13,7 +14,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <CursorTrail />
+        {children}
+      </body>
     </html>
   )
 }

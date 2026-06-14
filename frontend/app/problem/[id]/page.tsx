@@ -223,6 +223,10 @@ export default function ProblemPage() {
   const [askedTutor, setAskedTutor] = useState(false)
   const [showSolvedOverlay, setShowSolvedOverlay] = useState(false)
   const [problemCollapsed, setProblemCollapsed] = useState(false)
+  const [chargeLevel, setChargeLevel] = useState(0)
+  const [isCharging, setIsCharging] = useState(false)
+  const chargeRef = useRef<NodeJS.Timeout>()
+  const chargeValueRef = useRef(0)
 
   const triggerSolveAnimation = () => {
     // First burst - center
@@ -717,6 +721,29 @@ export default function ProblemPage() {
     }
   }
 
+  const startCharge = () => {
+    if (isSubmitting) return
+    setIsCharging(true)
+    chargeValueRef.current = 0
+    chargeRef.current = setInterval(() => {
+      chargeValueRef.current += 4
+      setChargeLevel(chargeValueRef.current)
+      if (chargeValueRef.current >= 100) {
+        clearInterval(chargeRef.current)
+        setIsCharging(false)
+        setChargeLevel(0)
+        handleSubmit()
+      }
+    }, 30)
+  }
+
+  const cancelCharge = () => {
+    clearInterval(chargeRef.current)
+    setIsCharging(false)
+    setChargeLevel(0)
+    chargeValueRef.current = 0
+  }
+
   const handleResetCode = () => {
     const defaultValue = defaultCode[language] || ''
     setCode(defaultValue)
@@ -1000,13 +1027,36 @@ export default function ProblemPage() {
                 >
                   {isRunningCode ? 'Running...' : 'Run Code'}
                 </button>
-                <button
-                  onClick={handleSubmit}
-                  disabled={isSubmitting || isRunningCode}
-                  className="px-4 py-1.5 text-xs text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed font-semibold rounded-lg transition-all shadow-md shadow-violet-500/10"
-                >
-                  {isSubmitting ? 'Submitting...' : 'Submit'}
-                </button>
+                <div className="relative inline-block">
+                  {chargeLevel > 0 && (
+                    <svg className="absolute inset-0 w-full h-full pointer-events-none"
+                      style={{ transform: 'rotate(-90deg)' }}>
+                      <rect x="1" y="1" width="calc(100% - 2px)"
+                        height="calc(100% - 2px)" rx="7" fill="none"
+                        stroke="rgb(139,92,246)" strokeWidth="2"
+                        strokeDasharray={`${chargeLevel * 2.4} 240`}
+                        style={{ filter: `drop-shadow(0 0 4px rgba(139,92,246,${chargeLevel / 100}))` }}
+                      />
+                    </svg>
+                  )}
+                  <button
+                    onMouseDown={startCharge}
+                    onMouseUp={cancelCharge}
+                    onMouseLeave={cancelCharge}
+                    onTouchStart={startCharge}
+                    onTouchEnd={cancelCharge}
+                    disabled={isSubmitting}
+                    className={`relative px-6 py-2.5 rounded-lg text-sm font-semibold
+                      transition-all select-none text-white
+                      ${isCharging
+                        ? 'bg-violet-600 scale-95 shadow-lg shadow-violet-500/40'
+                        : 'bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500'
+                      }`}
+                  >
+                    {isSubmitting ? 'Submitting...' :
+                     isCharging ? 'Hold...' : '⚔️ Submit Solution'}
+                  </button>
+                </div>
               </div>
             </div>
 

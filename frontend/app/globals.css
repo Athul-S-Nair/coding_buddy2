@@ -26,6 +26,13 @@
   margin: 0;
 }
 
+/* Hide the native cursor on precise pointers — CursorTrail replaces it */
+@media (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
+}
+
 html,
 body {
   max-width: 100vw;
