@@ -365,4 +365,212 @@ Provide a helpful response that guides the user toward solving the problem thems
   }
 });
 
+router.post('/ai/adversarial', async (req, res) => {
+  try {
+    const { code, language, problemTitle, problemDescription, language_id, problemId } = req.body;
+
+    if (!code || !problemId || !language_id) {
+      return res.status(400).json({ error: 'code, problemId, and language_id are required' });
+    }
+
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
+    }
+
+    // Step 1: AI generates attack inputs
+    const attackPrompt = `You are a competitive programmer trying to BREAK this solution. Read the code carefully and find its weaknesses.
+
+Generate 5 adversarial test inputs that might cause this specific code to fail. Target these vulnerability types:
+1. Integer overflow or very large numbers
+2. Empty or null-like input  
+3. All same values (e.g. [5,5,5,5])
+4. Already sorted or reverse sorted
+5. Single element
+
+For each, explain WHY you think it might break this specific code — reference actual lines you see.
+
+Return ONLY JSON:
+{
+  "attacks": [
+    {
+      "input": "the exact stdin string to test",
+      "targetedWeakness": "one sentence about what you see in their code that this exploits",
+      "confidence": "will_break" | "might_break" | "probably_fine"
+    }
+  ]
+}`;
+
+    const promptContext = `Problem Title: ${problemTitle}
+Problem Description: ${problemDescription}
+Language: ${language}
+Student Code:
+${code}`;
+
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const aiResult = await model.generateContent({
+      contents: [{ role: 'user', parts: [{ text: `${attackPrompt}\n\n${promptContext}` }] }]
+    });
+
+    let text = aiResult.response.text().trim();
+    if (text.startsWith("```json")) {
+      text = text.substring(7);
+    } else if (text.startsWith("```")) {
+      text = text.substring(3);
+    }
+    if (text.endsWith("```")) {
+      text = text.substring(0, text.length - 3);
+    }
+    text = text.trim();
+
+    let parsedAttacks;
+    try {
+      const parsed = JSON.parse(text);
+      parsedAttacks = parsed.attacks || [];
+    } catch (parseErr) {
+      console.error('Failed to parse attacks JSON:', text);
+      return res.status(500).json({ error: 'Failed to generate valid attack inputs from AI.' });
+    }
+
+    if (parsedAttacks.length === 0) {
+      return res.status(500).json({ error: 'No attacks generated.' });
+    }
+
+    // Ensure we only have 5 attacks
+    parsedAttacks = parsedAttacks.slice(0, 5);
+
+    // Step 2 & 3: Run each attack through Judge0/Piston and Compare results to expected outputs from test cases
+    const problem = problems.find(p => p.id === problemId);
+    
+    // We need expected outputs for the attack inputs.
+    // If the attack input matches one of problem.testCases, we use it.
+    // Otherwise, we ask Gemini to solve it.
+    const inputsToSolve = [];
+    const expectedOutputs = new Array(parsedAttacks.length).fill(null);
+
+    parsedAttacks.forEach((attack, idx) => {
+      if (problem && problem.testCases) {
+        const match = problem.testCases.find(tc => 
+          tc.input.trim() === attack.input.trim() ||
+          tc.input.trim().replace(/\r\n/g, '\n') === attack.input.trim().replace(/\r\n/g, '\n')
+        );
+        if (match) {
+          expectedOutputs[idx] = match.expectedOutput;
+        }
+      }
+      if (expectedOutputs[idx] === null) {
+        inputsToSolve.push({ idx, input: attack.input });
+      }
+    });
+
+    if (inputsToSolve.length > 0) {
+      const solverPrompt = `You are an expert competitive programmer and a correct reference solver.
+Given the following problem description, generate the exact expected output (stdout) for each of the provided inputs.
+
+Problem Title: ${problemTitle}
+Problem Description: ${problemDescription}
+
+Inputs to solve:
+${inputsToSolve.map((item, i) => `--- Input ${i+1} ---\n${item.input}`).join('\n\n')}
+
+For each input, solve the problem correctly.
+Return ONLY a JSON array containing the exact expected stdout strings for each input in the same order. Do not include any explanation or markdown formatting.
+Example format:
+[
+  "output for Input 1",
+  "output for Input 2",
+  ...
+]`;
+
+      const solverResult = await model.generateContent({
+        contents: [{ role: 'user', parts: [{ text: solverPrompt }] }]
+      });
+
+      let solverText = solverResult.response.text().trim();
+      if (solverText.startsWith("```json")) {
+        solverText = solverText.substring(7);
+      } else if (solverText.startsWith("```")) {
+        solverText = solverText.substring(3);
+      }
+      if (solverText.endsWith("```")) {
+        solverText = solverText.substring(0, solverText.length - 3);
+      }
+      solverText = solverText.trim();
+
+      try {
+        const solvedOutputs = JSON.parse(solverText);
+        inputsToSolve.forEach((item, i) => {
+          expectedOutputs[item.idx] = solvedOutputs[i];
+        });
+      } catch (err) {
+        console.error('Failed to parse solver JSON:', solverText);
+        inputsToSolve.forEach((item) => {
+          expectedOutputs[item.idx] = '';
+        });
+      }
+    }
+
+    // Now run the user's code against the attacks
+    const submissions = parsedAttacks.map(attack => ({
+      source_code: code,
+      language_id: language_id,
+      stdin: attack.input
+    }));
+
+    const { executeBatch, normalizeOutput } = require('../services/judge0');
+    const runResults = await executeBatch(submissions);
+
+    const attacksResult = parsedAttacks.map((attack, idx) => {
+      const run = runResults[idx];
+      const expected = expectedOutputs[idx] || '';
+      
+      const survived = run.status?.id === 3 && 
+                       normalizeOutput(run.stdout) === normalizeOutput(expected);
+
+      return {
+        input: attack.input,
+        targetedWeakness: attack.targetedWeakness,
+        confidence: attack.confidence,
+        survived,
+        actual: run.stdout || run.stderr || run.compile_output || '',
+        expected: expected
+      };
+    });
+
+    const survivedCount = attacksResult.filter(a => a.survived).length;
+    const verdict = survivedCount === 5 ? 'Battle Hardened' : 'Needs Hardening';
+
+    let tip = '';
+    if (survivedCount < 5) {
+      const failedAttacks = attacksResult.filter(a => !a.survived);
+      const tipPrompt = `You are Sage, a wise and friendly coding tutor.
+The student's code failed on some adversarial test inputs:
+${failedAttacks.map((a, i) => `${i+1}. Input: "${a.input}" | Targeted Weakness: "${a.targetedWeakness}"`).join('\n')}
+
+Student's code:
+${code}
+
+Give a one-sentence conceptual tip to the student on how to improve/harden their code against these specific failures. Do not write any code. Keep it under 30 words.`;
+
+      try {
+        const tipResult = await model.generateContent({ contents: [{ role: 'user', parts: [{ text: tipPrompt }] }] });
+        tip = tipResult.response.text().trim();
+      } catch (tipErr) {
+        console.error('Failed to generate tip:', tipErr);
+      }
+    }
+
+    res.json({
+      attacks: attacksResult,
+      survived: survivedCount,
+      total: 5,
+      verdict,
+      tip
+    });
+
+  } catch (error) {
+    console.error('Adversarial endpoint error:', error);
+    res.status(500).json({ error: 'Failed to run adversarial analysis.' });
+  }
+});
+
 module.exports = router;

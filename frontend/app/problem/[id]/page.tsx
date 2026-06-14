@@ -204,6 +204,12 @@ export default function ProblemPage() {
   const [submitStatus, setSubmitStatus] = useState('')
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
 
+  // Adversarial Attack States
+  const [adversarialStatus, setAdversarialStatus] = useState<'idle' | 'loading' | 'completed' | 'error'>('idle')
+  const [adversarialProgress, setAdversarialProgress] = useState(0)
+  const [adversarialResults, setAdversarialResults] = useState<any | null>(null)
+  const [expandedAttackIndex, setExpandedAttackIndex] = useState<number | null>(null)
+
   // AI Mentor States
   const [showAiMentor, setShowAiMentor] = useState(false)
   const [aiInput, setAiInput] = useState('')
@@ -241,6 +247,77 @@ export default function ProblemPage() {
       origin: { x: 1 },
       colors: ['#6366f1', '#f59e0b', '#ffffff']
     }), 400)
+  }
+
+  const runAdversarialAttack = async () => {
+    setAdversarialStatus('loading')
+    setAdversarialProgress(0)
+    setAdversarialResults(null)
+    setExpandedAttackIndex(null)
+    setConsoleTab('results')
+
+    let currentProgress = 0
+    const progressInterval = setInterval(() => {
+      currentProgress += 100 / (3000 / 100)
+      if (currentProgress >= 100) {
+        setAdversarialProgress(100)
+        clearInterval(progressInterval)
+      } else {
+        setAdversarialProgress(currentProgress)
+      }
+    }, 100)
+
+    try {
+      const response = await fetch(`${API_URL}/api/ai/adversarial`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          code,
+          language,
+          problemTitle: problem.title,
+          problemDescription: problem.description,
+          language_id: languageIds[language],
+          problemId: problem.id
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('Adversarial attack analysis failed')
+      }
+
+      const results = await response.json()
+      clearInterval(progressInterval)
+      setAdversarialProgress(100)
+      setAdversarialResults(results)
+      setAdversarialStatus('completed')
+
+      if (results.survived === 5) {
+        try {
+          const userRes = await fetch(`${API_URL}/api/me`, { credentials: 'include' })
+          if (userRes.ok) {
+            const userData = await userRes.json()
+            await fetch(`${API_URL}/api/progress/achievement`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                userId: userData.id,
+                achievement: 'Battle Hardened',
+                xpBonus: 75
+              })
+            })
+          }
+        } catch (e) {
+          console.error('Failed to save achievement', e)
+        }
+      }
+    } catch (err: any) {
+      clearInterval(progressInterval)
+      setAdversarialStatus('error')
+      console.error('Adversarial attack error:', err)
+    }
+  }
   }
 
   useEffect(() => {
@@ -537,7 +614,7 @@ export default function ProblemPage() {
 
   const handleSubmit = async () => {
     if (!problem) return
-
+ 
     setIsSubmitting(true)
     setConsoleTab('results')
     setSubmitStatus('Submitting all test cases...')
@@ -545,7 +622,8 @@ export default function ProblemPage() {
     setRunResults([])
     setRunSummary(null)
     setRunError(null)
-
+    setAdversarialStatus('idle')
+ 
     try {
       const response = await fetch(`${API_URL}/submit`, {
         method: 'POST',
@@ -558,14 +636,14 @@ export default function ProblemPage() {
           language_id: languageIds[language]
         })
       })
-
+ 
       if (!response.ok) {
         throw new Error('Failed to submit solution')
       }
-
+ 
       const result = await response.json()
       const isAccepted = result.overallStatus === 'Accepted'
-
+ 
       // Save user progress if accepted
       if (isAccepted) {
         triggerSolveAnimation()
@@ -590,6 +668,9 @@ export default function ProblemPage() {
         } catch (e) {
           console.error('Failed to save progress', e)
         }
+        setTimeout(() => {
+          runAdversarialAttack()
+        }, 3000)
       }
 
       // Format submission text output
@@ -924,6 +1005,168 @@ export default function ProblemPage() {
                     <pre className="text-[#c9d1d9] whitespace-pre-wrap leading-relaxed">{consoleOutput}</pre>
                   ) : (
                     <p className="text-[#58626f] italic">Click "Run Code" or "Submit" to see execution output...</p>
+                  )}
+
+                  {/* Sage Adversarial Attack Section */}
+                  {adversarialStatus !== 'idle' && (
+                    <div className="mt-6 border-t border-white/10 pt-6 font-sans">
+                      {adversarialStatus === 'loading' && (
+                        <div className="bg-[#151324] border border-[#8b5cf6]/20 rounded-xl p-5 space-y-4">
+                          <div className="flex items-center justify-between">
+                            <h4 className="text-sm font-bold text-violet-300 flex items-center gap-2">
+                              <span className="animate-spin inline-block">⚔️</span> {tutorName} is attacking your code...
+                            </h4>
+                            <span className="text-xs text-violet-400 font-mono font-semibold">{Math.round(adversarialProgress)}%</span>
+                          </div>
+                          <div className="w-full bg-white/5 rounded-full h-2 overflow-hidden border border-white/5">
+                            <div 
+                              className="bg-gradient-to-r from-violet-600 to-indigo-500 h-full transition-all duration-100 ease-out"
+                              style={{ width: `${adversarialProgress}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      )}
+
+                      {adversarialStatus === 'error' && (
+                        <div className="bg-rose-500/10 border border-rose-500/20 text-rose-300 rounded-xl p-4 text-xs">
+                          ⚠️ Sage was unable to perform the adversarial attack. Please check your network connection and try again.
+                        </div>
+                      )}
+
+                      {adversarialStatus === 'completed' && adversarialResults && (
+                        <div className="bg-slate-900/50 border border-white/5 rounded-xl p-5 space-y-6">
+                          {/* Battle report UI */}
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/5 pb-4">
+                            <div>
+                              <h4 className="text-base font-black text-white flex items-center gap-2">
+                                <span>⚔️</span> {tutorName}'s Battle Report
+                              </h4>
+                              <p className="text-xs text-slate-400 mt-0.5">
+                                Your code survived <span className="text-violet-400 font-bold">{adversarialResults.survived}</span>/{adversarialResults.total} attacks
+                              </p>
+                            </div>
+
+                            {/* Badge / Animation indicator */}
+                            <div className="flex items-center gap-2">
+                              {adversarialResults.survived === 5 ? (
+                                <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 flex items-center gap-1 shadow-md shadow-yellow-500/5">
+                                  <span>🏅</span> Battle Hardened
+                                </span>
+                              ) : adversarialResults.survived >= 3 ? (
+                                <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+                                  <span>🛡️</span> Solid Defense
+                                </span>
+                              ) : (
+                                <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center gap-1">
+                                  <span>⚠️</span> Needs Hardening
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Golden Shield Animation if 5/5 */}
+                          {adversarialResults.survived === 5 && (
+                            <div className="flex flex-col items-center justify-center py-6 bg-gradient-to-b from-yellow-500/10 to-transparent border border-yellow-500/20 rounded-xl relative overflow-hidden">
+                              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(234,179,8,0.08)_0%,transparent_70%)] animate-pulse"></div>
+                              <div className="relative w-20 h-20 flex items-center justify-center bg-yellow-500/10 rounded-full border border-yellow-500/30 shadow-[0_0_20px_rgba(234,179,8,0.2)] animate-bounce">
+                                <svg 
+                                  xmlns="http://www.w3.org/2000/svg" 
+                                  viewBox="0 0 24 24" 
+                                  fill="currentColor" 
+                                  className="w-12 h-12 text-yellow-400"
+                                >
+                                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                </svg>
+                              </div>
+                              <h3 className="text-base font-black text-yellow-400 mt-4 tracking-wide uppercase">Battle Hardened!</h3>
+                              <p className="text-xs text-yellow-200/70 mt-1 font-medium">+75 XP Bonus Awarded</p>
+                            </div>
+                          )}
+
+                          {/* Tip for 0-2/5 */}
+                          {adversarialResults.survived <= 2 && adversarialResults.tip && (
+                            <div className="bg-amber-500/10 border border-amber-500/20 text-amber-300 rounded-xl p-4 flex items-start gap-3">
+                              <span className="text-lg">💡</span>
+                              <div>
+                                <div className="font-bold text-xs uppercase tracking-wider text-amber-400">Sage's Advice</div>
+                                <p className="text-xs leading-relaxed mt-1 font-sans">{adversarialResults.tip}</p>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Attacks List */}
+                          <div className="space-y-2.5">
+                            {adversarialResults.attacks.map((attack: any, idx: number) => {
+                              const isExpanded = expandedAttackIndex === idx;
+                              return (
+                                <div 
+                                  key={idx} 
+                                  className="bg-[#0f141d] border border-white/5 rounded-xl overflow-hidden hover:border-white/10 transition-colors"
+                                >
+                                  <div 
+                                    className="p-3.5 flex items-center justify-between cursor-pointer select-none"
+                                    onClick={() => setExpandedAttackIndex(isExpanded ? null : idx)}
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      {attack.survived ? (
+                                        <span className="inline-flex items-center gap-1 text-[10px] font-extrabold bg-emerald-500/10 text-emerald-400 px-2.5 py-0.5 rounded-full border border-emerald-500/20 uppercase tracking-wide">
+                                          🛡️ Survived
+                                        </span>
+                                      ) : (
+                                        <span className="inline-flex items-center gap-1 text-[10px] font-extrabold bg-rose-500/10 text-rose-400 px-2.5 py-0.5 rounded-full border border-rose-500/20 uppercase tracking-wide">
+                                          💀 Broke
+                                        </span>
+                                      )}
+                                      <span className="text-xs font-mono text-slate-300 truncate max-w-[200px] sm:max-w-md">
+                                        Input: {attack.input.trim().substring(0, 30)}{attack.input.length > 30 ? '...' : ''}
+                                      </span>
+                                    </div>
+                                    <div className="text-slate-500 text-xs">
+                                      {isExpanded ? '▲' : '▼'}
+                                    </div>
+                                  </div>
+
+                                  {isExpanded && (
+                                    <div className="px-4 pb-4 pt-1 border-t border-white/5 bg-white/[0.01] space-y-3 font-sans text-xs">
+                                      <div className="mt-2">
+                                        <span className="text-slate-400 block font-semibold mb-1">Targeted Weakness:</span>
+                                        <p className="text-slate-200 bg-white/5 p-2.5 rounded-lg border border-white/5 leading-relaxed">{attack.targetedWeakness}</p>
+                                      </div>
+                                      <div>
+                                        <span className="text-slate-400 block font-semibold mb-1">Confidence of Break:</span>
+                                        <span className={`px-2 py-0.5 rounded font-mono font-bold capitalize text-[10px] ${
+                                          attack.confidence === 'will_break' 
+                                            ? 'bg-rose-500/20 text-rose-400' 
+                                            : attack.confidence === 'might_break' 
+                                              ? 'bg-amber-500/20 text-amber-400' 
+                                              : 'bg-emerald-500/20 text-emerald-400'
+                                        }`}>
+                                          {attack.confidence.replace('_', ' ')}
+                                        </span>
+                                      </div>
+                                      <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                          <span className="text-slate-400 block font-semibold mb-1 font-sans">Expected Output:</span>
+                                          <pre className="text-slate-300 bg-[#080b11] p-2.5 rounded border border-white/5 font-mono overflow-x-auto whitespace-pre-wrap">{attack.expected || '(empty)'}</pre>
+                                        </div>
+                                        <div>
+                                          <span className="text-slate-400 block font-semibold mb-1 font-sans">Actual Output:</span>
+                                          <pre className={`p-2.5 rounded border font-mono overflow-x-auto whitespace-pre-wrap ${
+                                            attack.survived 
+                                              ? 'text-emerald-300 bg-[#080b11] border-emerald-500/10' 
+                                              : 'text-rose-300 bg-rose-950/10 border-rose-500/10'
+                                          }`}>{attack.actual || '(empty)'}</pre>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
               ) : (

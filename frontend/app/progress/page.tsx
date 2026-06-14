@@ -58,6 +58,8 @@ interface ProgressData {
     timeTaken: number
   }>
   conceptMastery: Record<string, number>
+  xp?: number
+  achievements?: string[]
 }
 
 interface Node {
@@ -110,6 +112,13 @@ const connections = [
   { from: 'Trees', to: 'Recursion' },
   { from: 'Recursion', to: 'Dynamic Programming' }
 ]
+
+const ALL_ACHIEVEMENTS = [
+  { id: 'code_warrior', title: 'Code Warrior', description: 'Solve 5 problems on the platform.', icon: '⚔️', xp: 50, titleId: 'Code Warrior' },
+  { id: 'streak_master', title: 'Streak Master', description: 'Reach a 3-day solving streak.', icon: '🔥', xp: 50, titleId: 'Streak Master' },
+  { id: 'clean_slate', title: 'Clean Slate', description: 'Complete 3 clean solves without hints.', icon: '⚡', xp: 50, titleId: 'Clean Slate' },
+  { id: 'battle_hardened', title: 'Battle Hardened', description: 'Survive 5/5 adversarial attacks from Sage.', icon: '🛡️', xp: 75, titleId: 'Battle Hardened' }
+];
 
 export default function ProgressDashboard() {
   const [loading, setLoading] = useState(true)
@@ -303,7 +312,18 @@ export default function ProgressDashboard() {
       <div className="max-w-5xl mx-auto px-6 py-10 space-y-10">
         
         {/* SECTION 1: Stats Bar */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Card: Total XP */}
+          <div className="bg-gray-800 rounded-xl p-6 shadow-lg border border-violet-500/10">
+            <div className="text-4xl font-extrabold text-white flex items-center gap-2">
+              <AnimatedProgressStat value={progress?.xp || 0} />
+              <span className="text-sm font-extrabold text-violet-400 tracking-wider">XP</span>
+            </div>
+            <div className="text-gray-400 text-sm mt-2 font-medium">
+              Total Experience
+            </div>
+          </div>
+
           {/* Card 1: Problems Solved */}
           <div className="bg-gray-800 rounded-xl p-6 shadow-lg">
             <AnimatedProgressStat value={progress?.totalSolved || 0} />
@@ -329,6 +349,57 @@ export default function ProgressDashboard() {
             <div className="text-gray-400 text-sm mt-2 font-medium">
               Clean Solves
             </div>
+          </div>
+        </section>
+
+        {/* SECTION: Achievements */}
+        <section className="glass-card p-6 bg-gray-800/20 border border-white/5 rounded-xl shadow-lg space-y-4">
+          <div>
+            <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
+              <Award className="w-5 h-5 text-violet-400" />
+              Achievements
+            </h2>
+            <p className="text-xs text-slate-400 mt-1">
+              Earn XP bonuses by solving problems, maintaining streaks, and surviving Sage's adversarial attacks.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {ALL_ACHIEVEMENTS.map((ach) => {
+              const isUnlocked = progress?.achievements?.includes(ach.titleId);
+              return (
+                <div 
+                  key={ach.id} 
+                  className={`flex items-start gap-4 p-4 rounded-xl border transition-all ${
+                    isUnlocked 
+                      ? 'bg-violet-950/10 border-violet-500/20 shadow-md shadow-violet-500/5' 
+                      : 'bg-white/[0.01] border-white/5 opacity-50'
+                  }`}
+                >
+                  <div className={`text-3xl p-2.5 rounded-xl ${
+                    isUnlocked ? 'bg-violet-500/15 text-violet-400' : 'bg-white/5 text-slate-500'
+                  }`}>
+                    {ach.icon}
+                  </div>
+                  <div className="space-y-1 flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-bold text-sm text-white">{ach.title}</span>
+                      {isUnlocked ? (
+                        <span className="text-[10px] font-extrabold uppercase bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/20 tracking-wider">
+                          Unlocked
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-extrabold uppercase bg-white/5 text-slate-400 px-2 py-0.5 rounded-full border border-white/5 tracking-wider">
+                          Locked
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-slate-400 leading-relaxed">{ach.description}</p>
+                    <span className="text-[10px] font-mono font-bold text-violet-400">+{ach.xp} XP</span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </section>
 

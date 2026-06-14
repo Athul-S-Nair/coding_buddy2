@@ -121,6 +121,39 @@ router.get('/:userId', (req, res) => {
     }
   });
 
+  // Auto-award basic achievements and update XP
+  if (!userProgress.achievements) {
+    userProgress.achievements = [];
+  }
+  if (userProgress.xp === undefined) {
+    userProgress.xp = 0;
+  }
+
+  let updated = false;
+  if (totalSolved >= 5 && !userProgress.achievements.includes('Code Warrior')) {
+    userProgress.achievements.push('Code Warrior');
+    userProgress.xp += 50;
+    updated = true;
+  }
+  if (streak >= 3 && !userProgress.achievements.includes('Streak Master')) {
+    userProgress.achievements.push('Streak Master');
+    userProgress.xp += 50;
+    updated = true;
+  }
+  if (cleanSolvesCount >= 3 && !userProgress.achievements.includes('Clean Slate')) {
+    userProgress.achievements.push('Clean Slate');
+    userProgress.xp += 50;
+    updated = true;
+  }
+
+  if (updated) {
+    try {
+      writeProgress(progressData);
+    } catch (error) {
+      console.error('Error writing auto-awarded achievements:', error);
+    }
+  }
+
   res.json({
     solvedProblems,
     totalSolved,
@@ -128,6 +161,54 @@ router.get('/:userId', (req, res) => {
     cleanSolvesCount,
     solveHistory,
     conceptMastery,
+    xp: userProgress.xp || 0,
+    achievements: userProgress.achievements || [],
+  });
+});
+
+router.post('/achievement', (req, res) => {
+  const { userId, achievement, xpBonus } = req.body;
+
+  if (!userId || !achievement) {
+    return res.status(400).json({
+      error: 'userId and achievement are required',
+    });
+  }
+
+  const progressData = readProgress();
+
+  if (!progressData[userId]) {
+    progressData[userId] = { solves: [], achievements: [], xp: 0 };
+  }
+
+  const userProgress = progressData[userId];
+  if (!userProgress.achievements) {
+    userProgress.achievements = [];
+  }
+  if (userProgress.xp === undefined) {
+    userProgress.xp = 0;
+  }
+
+  const alreadyUnlocked = userProgress.achievements.includes(achievement);
+
+  if (!alreadyUnlocked) {
+    userProgress.achievements.push(achievement);
+    userProgress.xp += (xpBonus || 0);
+
+    try {
+      writeProgress(progressData);
+    } catch (error) {
+      console.error('Error writing progress file:', error);
+      return res.status(500).json({ error: 'Failed to save progress' });
+    }
+  }
+
+  res.json({
+    success: true,
+    message: 'Achievement updated',
+    alreadyUnlocked,
+    xp: userProgress.xp,
+    achievements: userProgress.achievements,
   });
 });
 
