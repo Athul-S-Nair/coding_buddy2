@@ -1,73 +1,69 @@
-const PISTON_URL = 'https://emkc.org/api/v2/piston/execute';
+const JUDGE0_URL = process.env.JUDGE0_API_URL || 'https://ce.judge0.com';
 
-const LANGUAGE_MAP = {
-  71: { language: 'python', version: '3.10.0' },
-  50: { language: 'c', version: '10.2.0' },
-  54: { language: 'c++', version: '10.2.0' },
-  62: { language: 'java', version: '15.0.2' },
-  63: { language: 'javascript', version: '18.15.0' },
-  75: { language: 'c', version: '10.2.0' }
-};
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 function normalizeOutput(output) {
   if (!output) return '';
   return output.toString().trim().replace(/\r\n/g, '\n').trim();
 }
 
-async function executeCode({ source_code, language_id, stdin = '' }) {
-  const runtime = LANGUAGE_MAP[parseInt(language_id, 10)];
-  if (!runtime) throw new Error(`Unsupported language_id: ${language_id}`);
+function encodeBase64(str) {
+  return Buffer.from(str || '').toString('base64');
+}
 
-  const response = await fetch(PISTON_URL, {
+function decodeBase64(str) {
+  if (!str) return '';
+  return Buffer.from(str, 'base64').toString('utf-8');
+}
+
+async function executeCode({ source_code, language_id, stdin = '' }) {
+  const url = `${JUDGE0_URL}/submissions?base64_encoded=true&wait=true`;
+  const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      language: runtime.language,
-      version: runtime.version,
-      files: [{ content: source_code }],
-      stdin: stdin || ''
+      source_code: encodeBase64(source_code),
+      language_id: parseInt(language_id, 10),
+      stdin: encodeBase64(stdin)
     })
   });
 
   if (!response.ok) {
-    throw new Error(`Piston API error: ${response.status}`);
+    throw new Error(`Judge0 API error: ${response.status}`);
   }
 
   const data = await response.json();
-  const run = data.run || {};
-  const compile = data.compile || {};
-
-  const hasCompileError = compile.code !== undefined && 
-                          compile.code !== 0 && 
-                          compile.stderr;
-  const hasRuntimeError = run.code !== undefined && run.code !== 0;
 
   return {
-    status: {
-      id: hasCompileError ? 6 : hasRuntimeError ? 11 : 3,
-      description: hasCompileError ? 'Compilation Error'
-                 : hasRuntimeError ? 'Runtime Error'
-                 : 'Accepted'
-    },
-    stdout: run.stdout || '',
-    stderr: run.stderr || '',
-    compile_output: compile.stderr || '',
-    time: null,
-    memory: null
+    status: data.status || { id: 13, description: 'Internal Error' },
+    stdout: decodeBase64(data.stdout),
+    stderr: decodeBase64(data.stderr),
+    compile_output: decodeBase64(data.compile_output),
+    time: data.time !== undefined ? data.time : null,
+    memory: data.memory !== undefined ? data.memory : null
   };
 }
 
 async function executeBatch(submissions) {
-  const results = await Promise.all(
-    submissions.map(s => executeCode(s).catch(err => ({
-      status: { id: 13, description: 'Internal Error' },
-      stdout: '',
-      stderr: err.message,
-      compile_output: '',
-      time: null,
-      memory: null
-    })))
-  );
+  const results = [];
+  for (let i = 0; i < submissions.length; i++) {
+    if (i > 0) {
+      await sleep(600);
+    }
+    try {
+      const res = await executeCode(submissions[i]);
+      results.push(res);
+    } catch (err) {
+      results.push({
+        status: { id: 13, description: 'Internal Error' },
+        stdout: '',
+        stderr: err.message,
+        compile_output: '',
+        time: null,
+        memory: null
+      });
+    }
+  }
   return results;
 }
 
