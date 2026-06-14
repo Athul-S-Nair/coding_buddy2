@@ -124,7 +124,13 @@ export default function Home() {
       const problemRes = await fetch(`${API_URL}/api/problems`)
       if (problemRes.ok) {
         const problemData = await problemRes.json()
-        setProblems(problemData)
+        const seen = new Set()
+        const unique = problemData.filter((p: Problem) => {
+          if (seen.has(p.id)) return false
+          seen.add(p.id)
+          return true
+        })
+        setProblems(unique)
       }
 
       try {
@@ -192,8 +198,11 @@ export default function Home() {
 
   // Filter problems
   const filteredProblems = problems.filter(p => {
-    const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.id === searchQuery
-    const matchesDifficulty = selectedDifficulty === 'All' || p.difficulty === selectedDifficulty
+    const matchesSearch = searchQuery === '' || 
+      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      String(p.id) === searchQuery.trim()
+    const matchesDifficulty = selectedDifficulty === 'All' || 
+      (p.difficulty || '').trim() === selectedDifficulty
     return matchesSearch && matchesDifficulty
   })
 

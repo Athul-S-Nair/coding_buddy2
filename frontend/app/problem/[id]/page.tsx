@@ -143,12 +143,50 @@ export default function ProblemPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [language, setLanguage] = useState<Language>('python')
-  const [codeByLanguage, setCodeByLanguage] = useState<Record<Language, string>>(() => ({
-    ...defaultCode,
-  }))
+  const [codeByLanguage, setCodeByLanguage] = useState<Record<Language, string>>(() => {
+    // Try to load saved code from localStorage
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem(`code_${params.id}`)
+        if (saved) {
+          const parsed = JSON.parse(saved)
+          // Validate it has the right shape
+          if (parsed && typeof parsed === 'object') {
+            return {
+              python: parsed.python || '',
+              javascript: parsed.javascript || '',
+              java: parsed.java || '',
+              cpp: parsed.cpp || '',
+              c: parsed.c || '',
+            }
+          }
+        }
+      } catch (e) {
+        // ignore parse errors
+      }
+    }
+    return {
+      python: '',
+      javascript: '',
+      java: '',
+      cpp: '',
+      c: '',
+    }
+  })
   const code = codeByLanguage[language]
   const setCode = (value: string) => {
-    setCodeByLanguage((prev) => ({ ...prev, [language]: value }))
+    setCodeByLanguage((prev) => {
+      const updated = { ...prev, [language]: value }
+      // Persist to localStorage
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem(`code_${params.id}`, JSON.stringify(updated))
+        } catch (e) {
+          // ignore storage errors
+        }
+      }
+      return updated
+    })
   }
   
   // Console Tab States
@@ -598,9 +636,17 @@ export default function ProblemPage() {
   }
 
   const handleResetCode = () => {
-    if (window.confirm('Are you sure you want to reset your code to the default template?')) {
-      setCode(defaultCode[language])
-    }
+    const defaultValue = defaultCode[language] || ''
+    setCode(defaultValue)
+    // Clear saved code for this problem
+    try {
+      const saved = localStorage.getItem(`code_${params.id}`)
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        parsed[language] = defaultValue
+        localStorage.setItem(`code_${params.id}`, JSON.stringify(parsed))
+      }
+    } catch (e) {}
   }
 
   if (loading) {
