@@ -222,6 +222,7 @@ export default function ProblemPage() {
   const [tutorName, setTutorName] = useState('Sage')
   const [askedTutor, setAskedTutor] = useState(false)
   const [showSolvedOverlay, setShowSolvedOverlay] = useState(false)
+  const [problemCollapsed, setProblemCollapsed] = useState(false)
 
   const triggerSolveAnimation = () => {
     // First burst - center
@@ -317,7 +318,6 @@ export default function ProblemPage() {
       setAdversarialStatus('error')
       console.error('Adversarial attack error:', err)
     }
-  }
   }
 
   useEffect(() => {
@@ -449,6 +449,7 @@ export default function ProblemPage() {
 
       const result = await response.json()
       setAiMessages(prev => [...prev, { role: 'ai', content: result.reply }])
+      setProblemCollapsed(true)
       setVisualizerCollapsed(true)
 
       // Detect concept and fetch visualization only if requestType is 'explain_concept'
@@ -719,6 +720,7 @@ export default function ProblemPage() {
   const handleResetCode = () => {
     const defaultValue = defaultCode[language] || ''
     setCode(defaultValue)
+    setProblemCollapsed(false)
     // Clear saved code for this problem
     try {
       const saved = localStorage.getItem(`code_${params.id}`)
@@ -816,10 +818,25 @@ export default function ProblemPage() {
       </header>
 
       {/* Main Splitted Content Workspace */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left Pane: Problem Details (takes 50% width) */}
-        <div className="w-1/2 border-r border-white/5 overflow-y-auto bg-[#080b11]">
-          <div className="max-w-2xl mx-auto px-6 py-6 space-y-6">
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Toggle button on the border between problem and editor panels */}
+        <button
+          onClick={() => setProblemCollapsed(prev => !prev)}
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-20
+            w-5 h-16 bg-gray-800 hover:bg-gray-700
+            border border-white/10 rounded-r-lg
+            flex items-center justify-center
+            text-gray-400 hover:text-white
+            transition-all duration-200"
+          title={problemCollapsed ? 'Show problem' : 'Hide problem'}
+        >
+          {problemCollapsed ? '›' : '‹'}
+        </button>
+        {/* Left Pane: Problem Details (collapsible) */}
+        <div className={`transition-all duration-300 ease-in-out
+          overflow-hidden flex flex-col border-r border-white/5 bg-[#080b11]
+          ${problemCollapsed ? 'w-0 opacity-0 min-w-0' : 'w-[400px] opacity-100'}`}>
+          <div className="max-w-2xl mx-auto px-6 py-6 space-y-6 overflow-y-auto">
             <div>
               <h2 className="text-xl font-bold text-white mb-3">{problem.title}</h2>
               <div className="text-sm text-[#c9d1d9] leading-7 whitespace-pre-wrap">
@@ -879,8 +896,23 @@ export default function ProblemPage() {
           </div>
         </div>
 
-        {/* Right Pane: Code Editor + Split Console (takes 50% width) */}
-        <div className="w-1/2 flex flex-col bg-[#0b0e14] overflow-hidden">
+        {/* Right Pane: Code Editor + Split Console (fills remaining width) */}
+        <div className="flex-1 flex flex-col bg-[#0b0e14] overflow-hidden">
+          {problemCollapsed && (
+            <div className="flex items-center gap-2 px-4 py-2
+              bg-gray-900 border-b border-white/5 text-sm">
+              <span className="text-gray-400 truncate">
+                {problem?.title}
+              </span>
+              <button
+                onClick={() => setProblemCollapsed(false)}
+                className="text-xs text-violet-400 hover:text-violet-300
+                whitespace-nowrap ml-auto"
+              >
+                Show problem ›
+              </button>
+            </div>
+          )}
           {/* Top Panel: Code Editor (60% height) */}
           <div className="h-3/5 flex flex-col border-b border-white/5 overflow-hidden">
             {/* Editor Action Header */}

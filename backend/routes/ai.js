@@ -1,9 +1,11 @@
 const express = require('express');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const Anthropic = require('@anthropic-ai/sdk');
 const { problems } = require('../data/store');
 
 const router = express.Router();
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY
+});
 
 router.post('/tutor', async (req, res) => {
   try {
@@ -18,8 +20,8 @@ router.post('/tutor', async (req, res) => {
       tutorName = 'Sage'
     } = req.body;
 
-    if (!process.env.GEMINI_API_KEY) {
-      return res.status(500).json({ reply: 'GEMINI_API_KEY is not configured.' });
+    if (!process.env.ANTHROPIC_API_KEY) {
+      return res.status(500).json({ reply: 'ANTHROPIC_API_KEY is not configured.' });
     }
 
     if (!problemId || !code || !requestType) {
@@ -33,46 +35,30 @@ router.post('/tutor', async (req, res) => {
       return res.status(404).json({ reply: 'Problem not found.' });
     }
 
-    let systemPrompt = `You are ${tutorName}, a friendly and patient coding tutor with a calm, 
-encouraging personality. You have a slightly witty sense of humor 
-but never at the student's expense — you're always on their side.
+    let systemPrompt = `You are ${tutorName}, a sharp coding tutor. Be warm but
+extremely concise.
 
-Your personality traits:
-- You refer to yourself as ${tutorName}, never as 'AI' or 'assistant'
-- You are genuinely excited when a student is close to the answer
-- You use phrases like 'Good thinking!', 'You're on the right track', 
-  'Interesting approach — let's think about this together'
-- You never say 'Wrong' or 'Incorrect' — instead say things like 
-  'Not quite — let's look at why' or 'Almost there!'
-- When a student is clearly frustrated (multiple failed attempts), 
-  you acknowledge it: 'I know this one's tricky — let's slow down 
-  and break it apart'
-- You end every response with one short encouraging line
+STRICT FORMAT RULES:
+- Maximum 60 words total. Never exceed this.
+- Use **bold** for max 2 key terms per response
+- Use bullet points only when listing 2+ things (max 3 bullets)
+- Each bullet = one short sentence
+- Never use headers
+- End with one short encouraging sentence (5 words max)
 
-Your strict rules (never break these no matter what):
-1. NEVER write any code, pseudocode, or code snippets — not even one line
-2. NEVER reveal the solution or any part of it
-3. You MAY point to a specific line number that has the problem, 
-   but only describe what is conceptually wrong there
-4. Keep responses under 150 words — be concise and warm, not lecture-y
-5. You are talking to a beginner student, so avoid heavy jargon. 
-   If you must use a technical term, explain it in plain English 
-   immediately after
+ABSOLUTE RULES:
+- NEVER write code or pseudocode
+- NEVER reveal the answer
+- You MAY mention a line number that is wrong
+- Plain English only — explain any jargon immediately
 
-When requestType is 'why_failing': explain in plain English why the 
-logic or approach is failing for the given test case. Be specific 
-about WHAT is going wrong, not just THAT something is wrong.
-
-When requestType is 'what_to_do': give a conceptual nudge. Describe 
-the direction of correct thinking without saying how to code it. 
-You can ask the student a leading question to guide their thinking.
-
-When requestType is 'explain_concept': explain the underlying concept 
-in simple terms. Always use a real-world analogy first, then connect 
-it back to the coding problem. Example format: 'Think of it like 
-[analogy]. In this problem, that means [connection].'
-
-Remember: you are ${tutorName}. Be warm, be brief, never give away the answer.`;
+FOR EACH REQUEST TYPE:
+why_failing → 1-2 sentences on what logic is wrong
+what_to_do → 1 nudge + 1 leading question
+explain_concept → 1 real-world analogy + 1 connection to the problem
+hint level 1 → one vague sentence, no technique names
+hint level 2 → name the technique, one sentence only
+hint level 3 → 2-3 bullet steps, conceptual only`;
 
     if (requestType === 'hint') {
       if (hintLevel === 1) {
@@ -103,16 +89,20 @@ Remember: you are ${tutorName}. Be warm, be brief, never give away the answer.`;
       .join('\n\n');
 
     const messages = [
-      { role: 'user', parts: [{ text: `${systemPrompt}\n\n${promptContext}` }] },
       ...messageHistory.map((message) => ({
-        role: message.role === 'assistant' || message.role === 'model' ? 'model' : 'user',
-        parts: [{ text: typeof message.content === 'string' ? message.content : '' }],
+        role: message.role === 'assistant' || message.role === 'model' ? 'assistant' : 'user',
+        content: typeof message.content === 'string' ? message.content : '',
       })),
+      { role: 'user', content: promptContext },
     ];
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-    const result = await model.generateContent({ contents: messages });
-    const reply = result.response.text();
+    const message = await anthropic.messages.create({
+      model: 'claude-sonnet-4-5',
+      max_tokens: 1024,
+      system: systemPrompt,
+      messages
+    });
+    const reply = message.content[0].text;
 
     res.json({ reply });
   } catch (error) {
@@ -125,11 +115,11 @@ router.post('/visualize', async (req, res) => {
   try {
     const { problemTitle, problemDescription, userCode, failedTestCase, concept } = req.body;
 
-    if (!process.env.GEMINI_API_KEY) {
-      return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
+    if (!process.env.ANTHROPIC_API_KEY) {
+      return res.status(500).json({ error: 'ANTHROPIC_API_KEY is not configured.' });
     }
 
-    const failedTestCaseString = failedTestCase 
+    const failedTestCaseString = failedTestCase
       ? `Input: ${failedTestCase.input || ''}\nExpected: ${failedTestCase.expected || failedTestCase.expectedOutput || ''}\nActual: ${failedTestCase.actual || ''}`
       : 'No failed test case provided.';
 
@@ -206,11 +196,16 @@ User's Code:
 ${userCode || ''}
 Failed Test Case:
 ${failedTestCaseString}
-Target Algorithm Concept: ${concept || 'array'}`;
+Target Algorithm Concept: ${concept || 'array'}
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-    const result = await model.generateContent({ contents: [{ role: 'user', parts: [{ text: prompt }] }] });
-    let text = result.response.text().trim();
+Keep all step notes under 8 words each.`;
+
+    const message = await anthropic.messages.create({
+      model: 'claude-sonnet-4-5',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: prompt }]
+    });
+    let text = message.content[0].text.trim();
 
     // Clean up potential markdown code blocks
     if (text.startsWith("```json")) {
@@ -227,7 +222,7 @@ Target Algorithm Concept: ${concept || 'array'}`;
       const parsed = JSON.parse(text);
       return res.json(parsed);
     } catch (parseErr) {
-      console.error('Failed to parse Gemini visualization response:', text);
+      console.error('Failed to parse visualization response:', text);
       return res.json({ error: "Could not generate visualization for this problem type" });
     }
 
@@ -373,8 +368,8 @@ router.post('/ai/adversarial', async (req, res) => {
       return res.status(400).json({ error: 'code, problemId, and language_id are required' });
     }
 
-    if (!process.env.GEMINI_API_KEY) {
-      return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
+    if (!process.env.ANTHROPIC_API_KEY) {
+      return res.status(500).json({ error: 'ANTHROPIC_API_KEY is not configured.' });
     }
 
     // Step 1: AI generates attack inputs
@@ -406,12 +401,14 @@ Language: ${language}
 Student Code:
 ${code}`;
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-    const aiResult = await model.generateContent({
-      contents: [{ role: 'user', parts: [{ text: `${attackPrompt}\n\n${promptContext}` }] }]
+    const aiResult = await anthropic.messages.create({
+      model: 'claude-sonnet-4-5',
+      max_tokens: 1024,
+      system: attackPrompt,
+      messages: [{ role: 'user', content: promptContext }]
     });
 
-    let text = aiResult.response.text().trim();
+    let text = aiResult.content[0].text.trim();
     if (text.startsWith("```json")) {
       text = text.substring(7);
     } else if (text.startsWith("```")) {
@@ -443,7 +440,7 @@ ${code}`;
     
     // We need expected outputs for the attack inputs.
     // If the attack input matches one of problem.testCases, we use it.
-    // Otherwise, we ask Gemini to solve it.
+    // Otherwise, we ask Claude to solve it.
     const inputsToSolve = [];
     const expectedOutputs = new Array(parsedAttacks.length).fill(null);
 
@@ -481,11 +478,13 @@ Example format:
   ...
 ]`;
 
-      const solverResult = await model.generateContent({
-        contents: [{ role: 'user', parts: [{ text: solverPrompt }] }]
+      const solverResult = await anthropic.messages.create({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 1024,
+        messages: [{ role: 'user', content: solverPrompt }]
       });
 
-      let solverText = solverResult.response.text().trim();
+      let solverText = solverResult.content[0].text.trim();
       if (solverText.startsWith("```json")) {
         solverText = solverText.substring(7);
       } else if (solverText.startsWith("```")) {
@@ -552,8 +551,12 @@ ${code}
 Give a one-sentence conceptual tip to the student on how to improve/harden their code against these specific failures. Do not write any code. Keep it under 30 words.`;
 
       try {
-        const tipResult = await model.generateContent({ contents: [{ role: 'user', parts: [{ text: tipPrompt }] }] });
-        tip = tipResult.response.text().trim();
+        const tipResult = await anthropic.messages.create({
+          model: 'claude-sonnet-4-5',
+          max_tokens: 1024,
+          messages: [{ role: 'user', content: tipPrompt }]
+        });
+        tip = tipResult.content[0].text.trim();
       } catch (tipErr) {
         console.error('Failed to generate tip:', tipErr);
       }
