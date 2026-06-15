@@ -1,11 +1,9 @@
 const express = require('express');
-const Anthropic = require('@anthropic-ai/sdk');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { problems } = require('../data/store');
 
 const router = express.Router();
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY
-});
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 router.post('/tutor', async (req, res) => {
   try {
@@ -20,8 +18,8 @@ router.post('/tutor', async (req, res) => {
       tutorName = 'Sage'
     } = req.body;
 
-    if (!process.env.ANTHROPIC_API_KEY) {
-      return res.status(500).json({ reply: 'ANTHROPIC_API_KEY is not configured.' });
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ reply: 'GEMINI_API_KEY is not configured.' });
     }
 
     if (!problemId || !code || !requestType) {
@@ -88,30 +86,21 @@ hint level 3 → 2-3 bullet steps, conceptual only`;
       .filter(Boolean)
       .join('\n\n');
 
-    const messages = [
-      ...messageHistory.map((message) => ({
-        role: message.role === 'assistant' || message.role === 'model' ? 'assistant' : 'user',
-        content: typeof message.content === 'string' ? message.content : '',
-      })),
-      { role: 'user', content: promptContext },
-    ];
-
-    const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 1024,
-      system: systemPrompt,
-      messages
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-2.5-flash',
+      systemInstruction: systemPrompt
     });
-    const reply = message.content[0].text;
+    const result = await model.generateContent(promptContext);
+    const reply = result.response.text();
 
     res.json({ reply });
   } catch (error) {
     console.error('Tutor API error:', error?.message || error)
     console.error('Error status:', error?.status)
-    console.error('API Key exists:', !!process.env.ANTHROPIC_API_KEY)
-    console.error('API Key prefix:', process.env.ANTHROPIC_API_KEY?.slice(0,8))
+    console.error('API Key exists:', !!process.env.GEMINI_API_KEY)
+    console.error('API Key prefix:', process.env.GEMINI_API_KEY?.slice(0,8))
     return res.status(500).json({
-      reply: `Error: ${error?.message || 'Unknown error'}. Key exists: ${!!process.env.ANTHROPIC_API_KEY}`
+      reply: `Error: ${error?.message || 'Unknown error'}. Key exists: ${!!process.env.GEMINI_API_KEY}`
     })
   }
 });
@@ -120,8 +109,8 @@ router.post('/visualize', async (req, res) => {
   try {
     const { problemTitle, problemDescription, userCode, failedTestCase, concept } = req.body;
 
-    if (!process.env.ANTHROPIC_API_KEY) {
-      return res.status(500).json({ error: 'ANTHROPIC_API_KEY is not configured.' });
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
     }
 
     const failedTestCaseString = failedTestCase
@@ -205,12 +194,9 @@ Target Algorithm Concept: ${concept || 'array'}
 
 Keep all step notes under 8 words each.`;
 
-    const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 1024,
-      messages: [{ role: 'user', content: prompt }]
-    });
-    let text = message.content[0].text.trim();
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const result = await model.generateContent(prompt);
+    let text = result.response.text().trim();
 
     // Clean up potential markdown code blocks
     if (text.startsWith("```json")) {
@@ -373,8 +359,8 @@ router.post('/ai/adversarial', async (req, res) => {
       return res.status(400).json({ error: 'code, problemId, and language_id are required' });
     }
 
-    if (!process.env.ANTHROPIC_API_KEY) {
-      return res.status(500).json({ error: 'ANTHROPIC_API_KEY is not configured.' });
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
     }
 
     // Step 1: AI generates attack inputs
@@ -406,14 +392,13 @@ Language: ${language}
 Student Code:
 ${code}`;
 
-    const aiResult = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 1024,
-      system: attackPrompt,
-      messages: [{ role: 'user', content: promptContext }]
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-2.5-flash',
+      systemInstruction: attackPrompt
     });
+    const aiResult = await model.generateContent(promptContext);
 
-    let text = aiResult.content[0].text.trim();
+    let text = aiResult.response.text().trim();
     if (text.startsWith("```json")) {
       text = text.substring(7);
     } else if (text.startsWith("```")) {
@@ -445,7 +430,7 @@ ${code}`;
     
     // We need expected outputs for the attack inputs.
     // If the attack input matches one of problem.testCases, we use it.
-    // Otherwise, we ask Claude to solve it.
+    // Otherwise, we ask Gemini to solve it.
     const inputsToSolve = [];
     const expectedOutputs = new Array(parsedAttacks.length).fill(null);
 
@@ -483,13 +468,10 @@ Example format:
   ...
 ]`;
 
-      const solverResult = await anthropic.messages.create({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1024,
-        messages: [{ role: 'user', content: solverPrompt }]
-      });
+      const solverModel = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+      const solverResult = await solverModel.generateContent(solverPrompt);
 
-      let solverText = solverResult.content[0].text.trim();
+      let solverText = solverResult.response.text().trim();
       if (solverText.startsWith("```json")) {
         solverText = solverText.substring(7);
       } else if (solverText.startsWith("```")) {
@@ -556,12 +538,9 @@ ${code}
 Give a one-sentence conceptual tip to the student on how to improve/harden their code against these specific failures. Do not write any code. Keep it under 30 words.`;
 
       try {
-        const tipResult = await anthropic.messages.create({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 1024,
-          messages: [{ role: 'user', content: tipPrompt }]
-        });
-        tip = tipResult.content[0].text.trim();
+        const tipModel = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+        const tipResult = await tipModel.generateContent(tipPrompt);
+        tip = tipResult.response.text().trim();
       } catch (tipErr) {
         console.error('Failed to generate tip:', tipErr);
       }
