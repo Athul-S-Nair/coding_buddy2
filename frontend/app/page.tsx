@@ -77,7 +77,7 @@ interface ProgressData {
   streak: number
 }
 
-import { API_URL } from '../lib/api'
+import { API_URL, authHeaders, clearToken } from '../lib/api'
 
 export default function Home() {
   const router = useRouter()
@@ -114,7 +114,7 @@ export default function Home() {
       }
 
       try {
-        const userRes = await fetch(`${API_URL}/api/me`, { credentials: 'include' })
+        const userRes = await fetch(`${API_URL}/api/me`, { credentials: 'include', headers: authHeaders() })
         if (userRes.ok) {
           const userData = await userRes.json()
           setUser(userData)
@@ -146,9 +146,11 @@ export default function Home() {
     try {
       const response = await fetch(`${API_URL}/api/logout`, {
         method: 'POST',
-        credentials: 'include'
+        credentials: 'include',
+        headers: authHeaders()
       })
       if (response.ok) {
+        clearToken()
         setUser(null)
         setProgress(null)
         router.refresh()

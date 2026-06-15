@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { API_URL } from '../../lib/api'
+import { API_URL, setToken } from '../../lib/api'
 
 export default function Login() {
   const router = useRouter()
@@ -39,6 +39,11 @@ export default function Login() {
               : 'Invalid username or password')
         )
       }
+
+      // Persist the auth token so authenticated requests work cross-origin
+      // (third-party cookies are blocked on Vercel + Render deployments)
+      const data = await response.json()
+      if (data.token) setToken(data.token)
 
       // Auth successful, Next.js handles route pushing
       router.push('/')

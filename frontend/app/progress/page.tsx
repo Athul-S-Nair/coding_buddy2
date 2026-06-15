@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Award, Flame, Zap, BarChart2, Calendar, Settings, ArrowLeft } from 'lucide-react'
-import { API_URL } from '../../lib/api'
+import { API_URL, authHeaders } from '../../lib/api'
 
 function useCountUp(target: number, duration = 1000) {
   const [count, setCount] = useState(0)
@@ -129,7 +129,7 @@ export default function ProgressDashboard() {
   useEffect(() => {
     const init = async () => {
       try {
-        const meRes = await fetch(`${API_URL}/api/me`, { credentials: 'include' })
+        const meRes = await fetch(`${API_URL}/api/me`, { credentials: 'include', headers: authHeaders() })
         if (meRes.ok) {
           const meData = await meRes.json()
           setUser(meData)

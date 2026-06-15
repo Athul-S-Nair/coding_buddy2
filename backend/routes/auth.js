@@ -31,6 +31,7 @@ function issueToken(res, user) {
   );
 
   res.cookie('token', token, cookieOptions);
+  return token;
 }
 
 router.post('/register', (req, res) => {
@@ -52,8 +53,8 @@ router.post('/register', (req, res) => {
     return res.status(409).json({ error: result.error });
   }
 
-  issueToken(res, result.user);
-  res.status(201).json(result.user);
+  const token = issueToken(res, result.user);
+  res.status(201).json({ ...result.user, token });
 });
 
 router.post('/login', (req, res) => {
@@ -68,9 +69,9 @@ router.post('/login', (req, res) => {
     return res.status(401).json({ error: 'Invalid credentials' });
   }
 
-  issueToken(res, user);
+  const token = issueToken(res, user);
 
-  res.json({ id: user.id, username: user.username });
+  res.json({ id: user.id, username: user.username, token });
 });
 
 router.post('/logout', (req, res) => {

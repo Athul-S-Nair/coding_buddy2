@@ -70,7 +70,7 @@ type TutorRequestType = 'why_failing' | 'explain_concept' | 'hint' | 'chat'
 type Language = 'python' | 'c' | 'cpp' | 'java' | 'javascript'
 type ConsoleTab = 'results' | 'custom-input'
 
-import { API_URL } from '../../../lib/api'
+import { API_URL, authHeaders } from '../../../lib/api'
 
 const defaultCode: Record<Language, string> = {
   python: `# Read input from stdin
@@ -306,7 +306,7 @@ export default function ProblemPage() {
 
       if (results.survived === 5) {
         try {
-          const userRes = await fetch(`${API_URL}/api/me`, { credentials: 'include' })
+          const userRes = await fetch(`${API_URL}/api/me`, { credentials: 'include', headers: authHeaders() })
           if (userRes.ok) {
             const userData = await userRes.json()
             await fetch(`${API_URL}/api/progress/achievement`, {
@@ -674,7 +674,7 @@ export default function ProblemPage() {
         setShowSolvedOverlay(true)
         setTimeout(() => setShowSolvedOverlay(false), 2500)
         try {
-          const userRes = await fetch(`${API_URL}/api/me`, { credentials: 'include' })
+          const userRes = await fetch(`${API_URL}/api/me`, { credentials: 'include', headers: authHeaders() })
           if (userRes.ok) {
             const userData = await userRes.json()
             await fetch(`${API_URL}/api/progress/solve`, {

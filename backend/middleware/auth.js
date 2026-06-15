@@ -12,12 +12,22 @@ function getTokenFromCookieHeader(cookieHeader) {
   return decodeURIComponent(tokenCookie.substring('token='.length));
 }
 
+function getTokenFromRequest(req) {
+  // Prefer the Authorization: Bearer header (works cross-origin where
+  // third-party cookies are blocked), then fall back to the cookie.
+  const authHeader = req.headers.authorization || req.headers.Authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    return authHeader.slice('Bearer '.length).trim();
+  }
+  return getTokenFromCookieHeader(req.headers.cookie);
+}
+
 function getCurrentUser(req) {
   if (!JWT_SECRET) {
     return { error: 'JWT_SECRET is not configured', status: 500 };
   }
 
-  const token = getTokenFromCookieHeader(req.headers.cookie);
+  const token = getTokenFromRequest(req);
   if (!token) {
     return { error: 'Not authenticated', status: 401 };
   }
@@ -35,5 +45,6 @@ function getCurrentUser(req) {
 module.exports = {
   JWT_SECRET,
   getTokenFromCookieHeader,
+  getTokenFromRequest,
   getCurrentUser,
 };
