@@ -95,13 +95,8 @@ hint level 3 → 2-3 bullet steps, conceptual only`;
 
     res.json({ reply });
   } catch (error) {
-    console.error('Tutor API error:', error?.message || error)
-    console.error('Error status:', error?.status)
-    console.error('API Key exists:', !!process.env.GEMINI_API_KEY)
-    console.error('API Key prefix:', process.env.GEMINI_API_KEY?.slice(0,8))
-    return res.status(500).json({
-      reply: `Error: ${error?.message || 'Unknown error'}. Key exists: ${!!process.env.GEMINI_API_KEY}`
-    })
+    console.error('Tutor endpoint error:', error?.message || error);
+    res.status(500).json({ reply: 'Failed to generate tutor response.' });
   }
 });
 
