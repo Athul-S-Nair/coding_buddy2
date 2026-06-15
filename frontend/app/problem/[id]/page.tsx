@@ -1058,36 +1058,13 @@ export default function ProblemPage() {
                 >
                   {isRunningCode ? 'Running...' : 'Run Code'}
                 </button>
-                <div className="relative inline-block">
-                  {chargeLevel > 0 && (
-                    <svg className="absolute inset-0 w-full h-full pointer-events-none"
-                      style={{ transform: 'rotate(-90deg)' }}>
-                      <rect x="1" y="1" width="calc(100% - 2px)"
-                        height="calc(100% - 2px)" rx="7" fill="none"
-                        stroke="rgb(139,92,246)" strokeWidth="2"
-                        strokeDasharray={`${chargeLevel * 2.4} 240`}
-                        style={{ filter: `drop-shadow(0 0 4px rgba(139,92,246,${chargeLevel / 100}))` }}
-                      />
-                    </svg>
-                  )}
-                  <button
-                    onMouseDown={startCharge}
-                    onMouseUp={cancelCharge}
-                    onMouseLeave={cancelCharge}
-                    onTouchStart={startCharge}
-                    onTouchEnd={cancelCharge}
-                    disabled={isSubmitting}
-                    className={`relative px-6 py-2.5 rounded-lg text-sm font-semibold
-                      transition-all select-none text-white
-                      ${isCharging
-                        ? 'bg-violet-600 scale-95 shadow-lg shadow-violet-500/40'
-                        : 'bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500'
-                      }`}
-                  >
-                    {isSubmitting ? 'Submitting...' :
-                     isCharging ? 'Hold...' : '⚔️ Submit Solution'}
-                  </button>
-                </div>
+                <button
+                  onClick={handleSubmit}
+                  disabled={isSubmitting || isRunningCode}
+                  className="relative px-6 py-2.5 rounded-lg text-sm font-semibold transition-all select-none text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? 'Submitting...' : '⚔️ Submit Solution'}
+                </button>
               </div>
             </div>
 
