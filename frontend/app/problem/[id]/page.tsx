@@ -6,6 +6,8 @@ import { useParams } from 'next/navigation'
 import Editor from '@monaco-editor/react'
 import { Settings } from 'lucide-react'
 import AlgorithmVisualizer from '../../components/AlgorithmVisualizer'
+import AuroraBackground from '../../components/AuroraBackground'
+import ParticleFace from '../../components/ParticleFace'
 import confetti from 'canvas-confetti'
 
 function TypewriterText({ text, speed = 12 }: { 
@@ -153,11 +155,11 @@ export default function ProblemPage() {
           // Validate it has the right shape
           if (parsed && typeof parsed === 'object') {
             return {
-              python: parsed.python || '',
-              javascript: parsed.javascript || '',
-              java: parsed.java || '',
-              cpp: parsed.cpp || '',
-              c: parsed.c || '',
+              python: parsed.python || defaultCode.python,
+              javascript: parsed.javascript || defaultCode.javascript,
+              java: parsed.java || defaultCode.java,
+              cpp: parsed.cpp || defaultCode.cpp,
+              c: parsed.c || defaultCode.c,
             }
           }
         }
@@ -166,11 +168,11 @@ export default function ProblemPage() {
       }
     }
     return {
-      python: '',
-      javascript: '',
-      java: '',
-      cpp: '',
-      c: '',
+      python: defaultCode.python,
+      javascript: defaultCode.javascript,
+      java: defaultCode.java,
+      cpp: defaultCode.cpp,
+      c: defaultCode.c,
     }
   })
   const code = codeByLanguage[language]
@@ -227,6 +229,10 @@ export default function ProblemPage() {
   const [isCharging, setIsCharging] = useState(false)
   const chargeRef = useRef<NodeJS.Timeout>()
   const chargeValueRef = useRef(0)
+  const [showFullVisualizer, setShowFullVisualizer] = useState(false)
+  const [avatarState, setAvatarState] = useState<
+    'idle' | 'thinking' | 'talking' | 'happy' | 'concerned'
+  >('idle')
 
   const triggerSolveAnimation = () => {
     // First burst - center
@@ -417,6 +423,7 @@ export default function ProblemPage() {
       setAiInput('')
     }
     setAiLoading(true)
+    setAvatarState('thinking')
     setShowAiMentor(true)
     setAskedTutor(true)
 
@@ -453,6 +460,8 @@ export default function ProblemPage() {
 
       const result = await response.json()
       setAiMessages(prev => [...prev, { role: 'ai', content: result.reply }])
+      setAvatarState('talking')
+      setTimeout(() => setAvatarState('idle'), 3000)
       setProblemCollapsed(true)
       setVisualizerCollapsed(true)
 
@@ -506,6 +515,7 @@ export default function ProblemPage() {
               if (vizData && !vizData.error) {
                 setVisualData(vizData)
                 setVisualizerCollapsed(false)
+                if (problemCollapsed) setShowFullVisualizer(true)
               } else {
                 setVisualData(null)
               }
@@ -649,6 +659,15 @@ export default function ProblemPage() {
       const result = await response.json()
       const isAccepted = result.overallStatus === 'Accepted'
  
+      // Avatar reacts to the verdict
+      if (isAccepted) {
+        setAvatarState('happy')
+        setTimeout(() => setAvatarState('idle'), 4000)
+      } else {
+        setAvatarState('concerned')
+        setTimeout(() => setAvatarState('idle'), 2000)
+      }
+
       // Save user progress if accepted
       if (isAccepted) {
         triggerSolveAnimation()
@@ -788,6 +807,7 @@ export default function ProblemPage() {
 
   return (
     <div className="h-screen bg-[#080b11] flex flex-col overflow-hidden">
+      <AuroraBackground />
       {/* Top Header */}
       <header className="glass-panel px-6 py-3 flex-shrink-0 flex items-center justify-between shadow-md border-b border-white/5">
         <div className="flex items-center gap-3">
@@ -993,6 +1013,17 @@ export default function ProblemPage() {
               />
             </div>
           </div>
+
+          {/* Full-width Algorithm Visualizer (shown when problem panel is collapsed) */}
+          {showFullVisualizer && visualData && (
+            <div className="relative w-full p-4 border-t border-white/5 bg-black/20">
+              <button
+                onClick={() => setShowFullVisualizer(false)}
+                className="absolute top-2 right-4 z-10 text-gray-500 hover:text-white text-xl"
+              >×</button>
+              <AlgorithmVisualizer data={visualData} />
+            </div>
+          )}
 
           {/* Bottom Panel: Tabbed Console (40% height) */}
           <div className="flex-1 flex flex-col bg-[#080b11] overflow-hidden">
@@ -1274,14 +1305,9 @@ export default function ProblemPage() {
             {/* Chat Header */}
             <div className="border-b border-white/5 px-4 py-3 flex items-center justify-between bg-[#0f141d]">
               <div className="flex items-center gap-2.5">
-                {/* Large interactable owl avatar */}
-                <div className="relative group cursor-pointer w-9 h-9 rounded-full bg-emerald-500 flex items-center justify-center font-bold text-white shadow-md shadow-emerald-500/20 transition-all duration-300 hover:scale-110 flex-shrink-0">
-                  <span className="group-hover:opacity-0 transition-opacity duration-200">
-                    {(tutorName[0] || 'S').toUpperCase()}
-                  </span>
-                  <span className="absolute opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-lg transform group-hover:rotate-12 transition-transform duration-300 select-none">
-                    🦉
-                  </span>
+                {/* Particle face avatar — reacts to tutor mood */}
+                <div className="flex-shrink-0">
+                  <ParticleFace state={avatarState} size={36} />
                 </div>
                 <div className="flex flex-col">
                   <span className="text-sm font-medium text-white leading-none">{tutorName}</span>

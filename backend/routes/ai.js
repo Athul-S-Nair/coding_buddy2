@@ -97,7 +97,7 @@ hint level 3 → 2-3 bullet steps, conceptual only`;
     ];
 
     const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-5',
+      model: 'claude-sonnet-4-6',
       max_tokens: 1024,
       system: systemPrompt,
       messages
@@ -201,7 +201,7 @@ Target Algorithm Concept: ${concept || 'array'}
 Keep all step notes under 8 words each.`;
 
     const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-5',
+      model: 'claude-sonnet-4-6',
       max_tokens: 1024,
       messages: [{ role: 'user', content: prompt }]
     });
@@ -402,7 +402,7 @@ Student Code:
 ${code}`;
 
     const aiResult = await anthropic.messages.create({
-      model: 'claude-sonnet-4-5',
+      model: 'claude-sonnet-4-6',
       max_tokens: 1024,
       system: attackPrompt,
       messages: [{ role: 'user', content: promptContext }]
@@ -479,7 +479,7 @@ Example format:
 ]`;
 
       const solverResult = await anthropic.messages.create({
-        model: 'claude-sonnet-4-5',
+        model: 'claude-sonnet-4-6',
         max_tokens: 1024,
         messages: [{ role: 'user', content: solverPrompt }]
       });
@@ -552,7 +552,7 @@ Give a one-sentence conceptual tip to the student on how to improve/harden their
 
       try {
         const tipResult = await anthropic.messages.create({
-          model: 'claude-sonnet-4-5',
+          model: 'claude-sonnet-4-6',
           max_tokens: 1024,
           messages: [{ role: 'user', content: tipPrompt }]
         });
