@@ -7,7 +7,7 @@ import Editor from '@monaco-editor/react'
 import { Settings } from 'lucide-react'
 import AlgorithmVisualizer from '../../components/AlgorithmVisualizer'
 import AuroraBackground from '../../components/AuroraBackground'
-import ParticleFace from '../../components/ParticleFace'
+import SageOrb from '../../components/SageOrb'
 import confetti from 'canvas-confetti'
 
 function TypewriterText({ text, speed = 12 }: { 
@@ -1307,7 +1307,7 @@ export default function ProblemPage() {
               <div className="flex items-center gap-2.5">
                 {/* Particle face avatar — reacts to tutor mood */}
                 <div className="flex-shrink-0">
-                  <ParticleFace state={avatarState} size={36} />
+                  <SageOrb state={avatarState} size={36} />
                 </div>
                 <div className="flex flex-col">
                   <span className="text-sm font-medium text-white leading-none">{tutorName}</span>

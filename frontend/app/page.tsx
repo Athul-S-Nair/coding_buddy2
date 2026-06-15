@@ -4,11 +4,11 @@ import { useEffect, useState } from 'react'
 import LinkComponent from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Settings } from 'lucide-react'
-import dynamic from 'next/dynamic'
 import AuroraBackground from './components/AuroraBackground'
 import ScrambleText from './components/ScrambleText'
 import HoloCard from './components/HoloCard'
 import MagneticButton from './components/MagneticButton'
+import SageOrb from './components/SageOrb'
 
 function useCountUp(target: number, duration = 1000) {
   const [count, setCount] = useState(0)
@@ -64,7 +64,6 @@ function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
   )
 }
 
-const Mascot = dynamic(() => import('./components/Mascot'), { ssr: false })
 
 interface Problem {
   id: string
@@ -431,9 +430,9 @@ export default function Home() {
             {/* Holographic grid scan lines */}
             <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:100%_4px] pointer-events-none animate-[pulse_2s_infinite]"></div>
             
-            {/* Mascot Lottie Animation */}
+            {/* Sage Orb tutor avatar */}
             <div className="mb-6 flex justify-center items-center">
-              <Mascot />
+              <SageOrb state="idle" size={80} />
             </div>
 
             {/* Holographic labels */}
