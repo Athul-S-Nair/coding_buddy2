@@ -2,3 +2,6 @@ node_modules/
 .env
 .env.local
 .next/
+
+# Runtime-registered users (created at runtime, not source)
+backend/data/users.json

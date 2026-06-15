@@ -7,6 +7,7 @@ import { API_URL } from '../../lib/api'
 
 export default function Login() {
   const router = useRouter()
+  const [mode, setMode] = useState<'login' | 'register'>('login')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -17,8 +18,10 @@ export default function Login() {
     setError('')
     setLoading(true)
 
+    const endpoint = mode === 'register' ? '/api/register' : '/api/login'
+
     try {
-      const response = await fetch(`${API_URL}/api/login`, {
+      const response = await fetch(`${API_URL}${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -29,10 +32,15 @@ export default function Login() {
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Invalid username or password')
+        throw new Error(
+          errorData.error ||
+            (mode === 'register'
+              ? 'Could not create account'
+              : 'Invalid username or password')
+        )
       }
 
-      // Login successful, Next.js handles route pushing
+      // Auth successful, Next.js handles route pushing
       router.push('/')
       router.refresh()
     } catch (err: any) {
@@ -40,6 +48,11 @@ export default function Login() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const toggleMode = () => {
+    setMode((m) => (m === 'login' ? 'register' : 'login'))
+    setError('')
   }
 
   const handleQuickLogin = (user: string, pass: string) => {
@@ -55,7 +68,11 @@ export default function Login() {
           <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-400 font-sans tracking-tight mb-2">
             Coding Buddy
           </h1>
-          <p className="text-[#8b949e] text-sm">Please sign in to save your solving progress</p>
+          <p className="text-[#8b949e] text-sm">
+            {mode === 'register'
+              ? 'Create an account to save your solving progress'
+              : 'Please sign in to save your solving progress'}
+          </p>
         </div>
 
         {error && (
@@ -78,7 +95,7 @@ export default function Login() {
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="e.g. admin"
+              placeholder={mode === 'register' ? 'Choose a username' : 'e.g. admin'}
               className="w-full bg-[#0d1117]/80 text-white border border-white/10 hover:border-white/20 focus:border-[#8b5cf6] focus:outline-none rounded-lg px-4 py-2.5 text-sm transition-all placeholder:text-[#58626f]"
             />
           </div>
@@ -102,11 +119,31 @@ export default function Login() {
             disabled={loading}
             className="w-full py-2.5 px-4 bg-gradient-to-r from-[#8b5cf6] to-[#6366f1] hover:from-[#7c3aed] hover:to-[#4f46e5] active:scale-[0.98] text-white font-medium rounded-lg text-sm transition-all disabled:opacity-50 disabled:pointer-events-none shadow-lg shadow-[#8b5cf6]/20"
           >
-            {loading ? 'Signing In...' : 'Sign In'}
+            {loading
+              ? mode === 'register'
+                ? 'Creating Account...'
+                : 'Signing In...'
+              : mode === 'register'
+              ? 'Create Account'
+              : 'Sign In'}
           </button>
         </form>
 
+        {/* Mode toggle */}
+        <div className="mt-5 text-center">
+          <button
+            type="button"
+            onClick={toggleMode}
+            className="text-xs text-[#8b949e] hover:text-[#8b5cf6] transition-colors"
+          >
+            {mode === 'register'
+              ? 'Already have an account? Sign in'
+              : "Don't have an account? Create one"}
+          </button>
+        </div>
+
         {/* Demo Accounts Panel */}
+        {mode === 'login' && (
         <div className="mt-8 pt-6 border-t border-white/5">
           <p className="text-center text-xs font-semibold uppercase tracking-wider text-[#8b949e] mb-4">
             Quick Login Demo Accounts
@@ -128,6 +165,7 @@ export default function Login() {
             ))}
           </div>
         </div>
+        )}
 
         <div className="mt-6 text-center">
           <Link href="/" className="text-xs text-[#8b949e] hover:text-[#8b5cf6] transition-colors">
