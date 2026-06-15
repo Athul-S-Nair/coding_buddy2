@@ -30,7 +30,7 @@ router.post('/run-code', async (req, res) => {
         stdout: formatted.stdout,
         stderr: formatted.stderr,
         compile_output: result.compile_output || '',
-        error: formatted.passed ? null : (formatted.status?.description || 'Wrong Answer'),
+        error: formatted.passed ? null : (result.status?.id === 3 ? 'Wrong Answer' : (result.status?.description || 'Wrong Answer')),
         headerLabel: "Run Results (custom input)",
         resultsPanelHeader: "Run Results (custom input)",
         results_panel_header: "Run Results (custom input)",
@@ -66,7 +66,7 @@ router.post('/run-code', async (req, res) => {
         passed: formatted.passed,
         stderr: formatted.stderr,
         compile_output: result.compile_output || '',
-        error: formatted.passed ? null : (formatted.status?.description || 'Wrong Answer'),
+        error: formatted.passed ? null : (result.status?.id === 3 ? 'Wrong Answer' : (result.status?.description || 'Wrong Answer')),
       };
     });
 
@@ -126,7 +126,7 @@ router.post('/submit', async (req, res) => {
         passed: formatted.passed,
         stderr: formatted.stderr,
         compile_output: result.compile_output || '',
-        error: formatted.passed ? null : (formatted.status?.description || 'Wrong Answer'),
+        error: formatted.passed ? null : (result.status?.id === 3 ? 'Wrong Answer' : (result.status?.description || 'Wrong Answer')),
       };
     });
 
